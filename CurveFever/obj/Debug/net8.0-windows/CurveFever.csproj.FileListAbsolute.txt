@@ -14,3 +14,20 @@ C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\n
 C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.pdb
 C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.genruntimeconfig.cache
 C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\ref\CurveFever.dll
+C:\Users\User\Desktop\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.exe
+C:\Users\User\Desktop\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.deps.json
+C:\Users\User\Desktop\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.runtimeconfig.json
+C:\Users\User\Desktop\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.dll
+C:\Users\User\Desktop\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.pdb
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.GenerateResource.cache
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfo.cs
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.sourcelink.json
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.dll
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\refint\CurveFever.dll
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.pdb
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.genruntimeconfig.cache
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\ref\CurveFever.dll
+C:\Users\User\Desktop\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.Player.resources
