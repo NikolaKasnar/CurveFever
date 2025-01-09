@@ -1,0 +1,16 @@
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.exe
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.deps.json
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.runtimeconfig.json
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.dll
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.pdb
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.Form1.resources
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.GenerateResource.cache
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.GeneratedMSBuildEditorConfig.editorconfig
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfoInputs.cache
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfo.cs
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.CoreCompileInputs.cache
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.dll
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\refint\CurveFever.dll
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.pdb
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.genruntimeconfig.cache
+C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\ref\CurveFever.dll
