@@ -14,6 +14,15 @@ namespace CurveFever
 
         private void InitializeComponents()
         {
+            
+            //u svrhu testiranja Game klase
+            //ona zasad ne radi za vise playera jer nisu definirane kontrole za njih
+            //za vidjeti meni treba ove dvije linije zakomentirati
+            //a ostalo u ovoj funkciji otkomentirati
+            int numberOfPlayers = 1;
+            StartGame(numberOfPlayers);
+            
+            /*
             // Crtanje pocetne forme i naslova
             this.Text = "CurveFever";
             this.Size = new System.Drawing.Size(800, 600);
@@ -48,7 +57,7 @@ namespace CurveFever
                 Location = new System.Drawing.Point(360, 180)
             };
             btnExit.Click += BtnExit_Click;
-            this.Controls.Add(btnExit);
+            this.Controls.Add(btnExit);*/
         }
 
         // Klikom na gumb Start Game otvara se forma za odabir broja igraca
@@ -74,28 +83,33 @@ namespace CurveFever
             // Obrisemo prijasnji ekran
             this.Controls.Clear();
 
-            this.Size = new System.Drawing.Size(1500, 1000);
+            this.Size = new System.Drawing.Size(1400, 800);
 
             // Napravimo SplitContainer; lijevo je igra, a desno prikaz rezultata
             SplitContainer splitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
-                SplitterDistance = this.Width / 2,
+                SplitterDistance = 3*Width/4,
                 BorderStyle = BorderStyle.None,
                 IsSplitterFixed = true
             };
             this.Controls.Add(splitContainer);
 
             // Lijevi container(igra)
-            Panel gamePanel = new Panel
+            /*Panel gamePanel = new Panel
             {
                 Dock = DockStyle.Fill,
                 BackColor = System.Drawing.Color.Black
             };
             // Dodavanje zutog bordera
             gamePanel.Paint += GamePanel_Paint;
-            splitContainer.Panel1.Controls.Add(gamePanel);
+            splitContainer.Panel1.Controls.Add(gamePanel);*/
+
+            //lijevi container, s novim Game objektom
+            Game game = new Game(numberOfPlayers);
+            splitContainer.Panel1.Controls.Add(game);
+            splitContainer.Panel1.Paint += GamePanel_Paint;
 
             // Desni container
             Panel scorePanel = new Panel 
@@ -103,6 +117,7 @@ namespace CurveFever
                 Dock = DockStyle.Fill,
                 BackColor = System.Drawing.Color.Black 
             };
+            
             // Sav tekst u desnom containeru
             Label lblRaceTo = new Label
             {
@@ -153,7 +168,7 @@ namespace CurveFever
                 AutoSize = true
             };
             scorePanel.Controls.Add(lblEscapeToQuit);
-
+            
             splitContainer.Panel2.Controls.Add(scorePanel);
         }
 
@@ -168,12 +183,6 @@ namespace CurveFever
                     e.Graphics.DrawRectangle(yellowPen, 0, 0, panel.Width - 1, panel.Height - 1);
                 }
             }
-        }
-
-        // Nisam bio siguran ni u dz ali pretpostavljam da ovaj laod mora ostati?
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
     }
 

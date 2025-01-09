@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Nikola D disk\\Faks\\Diplomski\\RP3\\CurveFever\\CurveFever\\CurveFever\\CurveFever.csproj": {}
+    "C:\\Users\\Nora\\Desktop\\fax\\kurva\\CurveFever\\CurveFever.csproj": {}
   },
   "projects": {
-    "C:\\Nikola D disk\\Faks\\Diplomski\\RP3\\CurveFever\\CurveFever\\CurveFever\\CurveFever.csproj": {
+    "C:\\Users\\Nora\\Desktop\\fax\\kurva\\CurveFever\\CurveFever.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Nikola D disk\\Faks\\Diplomski\\RP3\\CurveFever\\CurveFever\\CurveFever\\CurveFever.csproj",
+        "projectUniqueName": "C:\\Users\\Nora\\Desktop\\fax\\kurva\\CurveFever\\CurveFever.csproj",
         "projectName": "CurveFever",
-        "projectPath": "C:\\Nikola D disk\\Faks\\Diplomski\\RP3\\CurveFever\\CurveFever\\CurveFever\\CurveFever.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Nikola D disk\\Faks\\Diplomski\\RP3\\CurveFever\\CurveFever\\CurveFever\\obj\\",
+        "projectPath": "C:\\Users\\Nora\\Desktop\\fax\\kurva\\CurveFever\\CurveFever.csproj",
+        "packagesPath": "C:\\Users\\Nora\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Nora\\Desktop\\fax\\kurva\\CurveFever\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Nora\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

@@ -14,3 +14,38 @@ C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\n
 C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.pdb
 C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.genruntimeconfig.cache
 C:\Nikola D disk\Faks\Diplomski\RP3\CurveFever\CurveFever\CurveFever\obj\Debug\net8.0-windows\ref\CurveFever.dll
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.exe
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.deps.json
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.runtimeconfig.json
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.dll
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\bin\Debug\net8.0-windows\CurveFever.pdb
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.Form1.resources
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.GenerateResource.cache
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.GeneratedMSBuildEditorConfig.editorconfig
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfoInputs.cache
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfo.cs
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.CoreCompileInputs.cache
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.sourcelink.json
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.dll
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\refint\CurveFever.dll
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.pdb
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.genruntimeconfig.cache
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\ref\CurveFever.dll
+\\wsl.localhost\Ubuntu\home\norberd\CurveFever\CurveFever\obj\Debug\net8.0-windows\CurveFever.Game.resources
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\bin\Debug\net8.0-windows\CurveFever.exe
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\bin\Debug\net8.0-windows\CurveFever.deps.json
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\bin\Debug\net8.0-windows\CurveFever.runtimeconfig.json
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\bin\Debug\net8.0-windows\CurveFever.dll
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\bin\Debug\net8.0-windows\CurveFever.pdb
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.Form1.resources
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.Game.resources
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.GenerateResource.cache
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfoInputs.cache
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.AssemblyInfo.cs
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.csproj.CoreCompileInputs.cache
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.dll
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\refint\CurveFever.dll
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.pdb
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\CurveFever.genruntimeconfig.cache
+C:\Users\Nora\Desktop\fax\kurva\CurveFever\obj\Debug\net8.0-windows\ref\CurveFever.dll
