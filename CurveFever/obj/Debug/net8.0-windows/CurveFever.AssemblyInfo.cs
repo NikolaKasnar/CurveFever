@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CurveFever")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+756964a03b023bbe323221a54bc3627580387a86")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d23e319186b8ce70106b6080283d26af61abf323")]
 [assembly: System.Reflection.AssemblyProductAttribute("CurveFever")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CurveFever")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

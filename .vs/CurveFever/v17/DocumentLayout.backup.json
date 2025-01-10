@@ -7,7 +7,7 @@
       "RelativeMoniker": "D:0:0:{75C39D1D-B29E-4DE9-A20C-1D107DD88C18}|CurveFever\\CurveFever.csproj|solutionrelative:curvefever\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{75C39D1D-B29E-4DE9-A20C-1D107DD88C18}|CurveFever\\CurveFever.csproj|c:\\users\\user\\desktop\\curvefever\\curvefever\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{75C39D1D-B29E-4DE9-A20C-1D107DD88C18}|CurveFever\\CurveFever.csproj|C:\\Users\\User\\Desktop\\CurveFever\\curvefever\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{75C39D1D-B29E-4DE9-A20C-1D107DD88C18}|CurveFever\\CurveFever.csproj|solutionrelative:curvefever\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "CurveFever\\Form1.cs",
               "ToolTip": "C:\\Users\\User\\Desktop\\CurveFever\\CurveFever\\Form1.cs",
               "RelativeToolTip": "CurveFever\\Form1.cs",
-              "ViewState": "AgIAAHABAAAAAAAAAAAxwHoBAAA/AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-09T21:51:20.599Z",
               "EditorCaption": ""
@@ -55,8 +55,7 @@
               "RelativeToolTip": "CurveFever\\Form1.Designer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T21:51:10.163Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-09T21:51:10.163Z"
             },
             {
               "$type": "Document",
@@ -68,8 +67,7 @@
               "RelativeToolTip": "CurveFever\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T21:51:05.712Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-09T21:51:05.712Z"
             },
             {
               "$type": "Document",
@@ -80,8 +78,7 @@
               "ToolTip": "C:\\Users\\User\\Desktop\\CurveFever\\CurveFever\\Form1.cs [Design]",
               "RelativeToolTip": "CurveFever\\Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T21:51:01.154Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-01-09T21:51:01.154Z"
             }
           ]
         }

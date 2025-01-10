@@ -11,6 +11,8 @@ namespace CurveFever
         public string Name { get; set; }
         public Keys LeftKey { get; set; }
         public Keys RightKey { get; set; }
+
+        public int score { get; set; }
     }
     public partial class Form1 : Form
     {
@@ -295,7 +297,8 @@ namespace CurveFever
                 {
                     Name = playerControl.PlayerName,
                     LeftKey = playerControl.LeftKey,
-                    RightKey = playerControl.RightKey
+                    RightKey = playerControl.RightKey,
+                    score = 0
                 });
             }
 
