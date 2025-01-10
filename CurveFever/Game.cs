@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows;
 using System.Drawing.Drawing2D;
+using System.Runtime.CompilerServices;
 
 namespace CurveFever
 {
@@ -24,22 +25,26 @@ namespace CurveFever
         int[][] controls; //za svakog igraca sadrzi koje su tipke za lijevo i desno
         //enum za Keys: https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.keys?view=windowsdesktop-9.0
         Bitmap currentState; //slika u koju se sprema trenutni izgled ekrana
-        int curve = 30; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
-        int radius = 20; //radijus kruznice po kojoj skrece
+        const float curve = 0.05f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
+        float[] headings;
+        int radius = 5; //radijus kruznice po kojoj skrece
 
         public Game(int numberOfPlayers)
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
             Dock = DockStyle.Fill;
             this.width = Width;
             this.height = Height;
             this.numberOfPlayers = numberOfPlayers;
             lastPoints = new Point[numberOfPlayers][];
             controls = new int[numberOfPlayers][];
+            headings = new float[numberOfPlayers];
             for (int i = 0; i < numberOfPlayers; i++)
             {
                 lastPoints[i] = new Point[2];
                 controls[i] = new int[2];
+                headings[i] = 0.0f;
             }
             //trenutno stavljeno i testirano za jednog igraca,
             //kasnije cemo valjda prosljeđivat kontrole za svakog u ovaj konstruktor
@@ -77,26 +82,12 @@ namespace CurveFever
 
         private void MoveLeft(int player)
         {
-            //zadnje koordinate na kojima je zmija
-            int x = lastPoints[player][1].X;
-            int y = lastPoints[player][1].Y;
-
-            lastPoints[player][0] = new Point(x, y); //ovo je stara pozicija
-            lastPoints[player][1] = new Point(x - radius + Convert.ToInt32(Math.Round(radius* Math.Cos(curve))), y + Convert.ToInt32(Math.Round(radius * Math.Sin(curve)))); //ovo je nova ljevija pozicija
-
-            Refresh();
+            headings[player] -= curve;
         }
 
         private void MoveRight(int player)
         {
-            //zadnje koordinate na kojima je zmija
-            int x = lastPoints[player][1].X;
-            int y = lastPoints[player][1].Y;
-
-            lastPoints[player][0] = new Point(x, y); //ovo je stara pozicija
-            lastPoints[player][1] = new Point(x + radius + Convert.ToInt32(Math.Round(radius * Math.Cos(curve))), y + Convert.ToInt32(Math.Round(radius * Math.Sin(curve)))); //ovo je nova desnija pozicija
-
-            Refresh();
+            headings[player] += curve;
         }
 
         private void GamePaint(object sender, PaintEventArgs e)
@@ -131,7 +122,9 @@ namespace CurveFever
                 {
                     novi.DrawCurve(pens[i], lastPoints[i]); //spajamo zadnje dvije pozicije zmije
                     g.DrawImage(currentState, new Point(0, 0));
-                    Point p = new Point(lastPoints[i][1].X, lastPoints[i][1].Y - 1);
+                    Point p = new Point(
+                        Convert.ToInt32(lastPoints[i][1].X + radius * Math.Cos(headings[i])),
+                        Convert.ToInt32(lastPoints[i][1].Y + radius * Math.Sin(headings[i])));
                     lastPoints[i][0] = lastPoints[i][1]; //dosad zadnja pozicija postaje predzadnja
                     lastPoints[i][1] = p; //novonapravljena pozicija postaje zadnja
                 }
