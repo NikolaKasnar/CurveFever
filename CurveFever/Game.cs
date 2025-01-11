@@ -10,46 +10,46 @@ using System.Windows.Forms;
 using System.Windows;
 using System.Drawing.Drawing2D;
 using System.Runtime.CompilerServices;
+using Microsoft.VisualBasic.Devices;
 
 namespace CurveFever
 {
     public partial class Game : UserControl
     {
         int width, height; //visina i sirina ekrana, jednaka kao za Panel1 u splitcontaineru
+        List<Player> players;
+        List<Keys> LeftKeys;
+        List<Keys> RightKeys;
         int numberOfPlayers;
-        bool start; //je li pocetna pozicija ili ne
-        Point[][] lastPoints; //zadnje dvije tocke na kojima se nalaze igraci, koje ce se onda povezati linijom
         static int penSize = 5;
         Pen[] pens = { new Pen(Color.Red, penSize), new Pen(Color.Yellow, penSize), new Pen(Color.Azure, penSize),
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
-        int[][] controls; //za svakog igraca sadrzi koje su tipke za lijevo i desno
-        //enum za Keys: https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.keys?view=windowsdesktop-9.0
+        bool start; //je li pocetna pozicija ili ne
         Bitmap currentState; //slika u koju se sprema trenutni izgled ekrana
         const float curve = 0.05f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
-        float[] headings;
         int radius = 5; //radijus kruznice po kojoj skrece
 
-        public Game(int numberOfPlayers)
+        public Game(List<Player> players)
         {
             InitializeComponent();
             this.DoubleBuffered = true;
             Dock = DockStyle.Fill;
+            BackColor = Color.Black;
             this.width = Width;
             this.height = Height;
-            this.numberOfPlayers = numberOfPlayers;
-            lastPoints = new Point[numberOfPlayers][];
-            controls = new int[numberOfPlayers][];
-            headings = new float[numberOfPlayers];
+            this.players = players;
+            numberOfPlayers = players.Count;
+            LeftKeys = new List<Keys>(numberOfPlayers);
+            RightKeys = new List<Keys>(numberOfPlayers);
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                lastPoints[i] = new Point[2];
-                controls[i] = new int[2];
-                headings[i] = 0.0f;
+                players[i].lastPoints = new Point[2];
+                players[i].Pen = pens[i];
+                LeftKeys.Add(players[i].LeftKey);
+                RightKeys.Add(players[i].RightKey);
+                players[i].heading = 0.0f;
             }
-            //trenutno stavljeno i testirano za jednog igraca,
-            //kasnije cemo valjda prosljeđivat kontrole za svakog u ovaj konstruktor
-            controls[0][0] = 65; //'a' za lijevo
-            controls[0][1] = 68; //'d' za desno
+
             currentState = new Bitmap(width, height);
             start = true;
             Paint += GamePaint;
@@ -66,15 +66,27 @@ namespace CurveFever
 
         private void GameKeyPress(object? sender, KeyEventArgs e)
         {
-            var key = (e as KeyEventArgs).KeyValue;
+            /* //alt verzija, dođe na isto
+            int left = LeftKeys.FindIndex(key => key == e.KeyCode);
+            if (left != -1)
+            {
+                MoveLeft(left);
+            }
+            int right = RightKeys.FindIndex(key => key == e.KeyCode);
+            if (right != -1)
+            {
+                MoveRight(right);
+            }
+            */
+            
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                if (controls[i][0] == key) MoveLeft(i);
+                if (players[i].LeftKey == e.KeyCode) MoveLeft(i);
                 //pritisnuta je tipka za lijevo kod i-tog igraca
             }
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                if (controls[i][1] == key) MoveRight(i);
+                if (players[i].RightKey == e.KeyCode) MoveRight(i);
                 //pritisnuta je tipka za desno kod i-tog igraca
 
             }
@@ -82,12 +94,22 @@ namespace CurveFever
 
         private void MoveLeft(int player)
         {
-            headings[player] -= curve;
+            players[player].heading -= curve;
         }
 
         private void MoveRight(int player)
         {
-            headings[player] += curve;
+            players[player].heading += curve;
+        }
+
+        private void collide(Player i)
+        {
+            if (players.Contains(i))
+            {
+                players.Remove(i);
+                numberOfPlayers--;
+            }
+                
         }
 
         private void GamePaint(object sender, PaintEventArgs e)
@@ -108,9 +130,10 @@ namespace CurveFever
                 {
                     Point start = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
                     //da nije bas na rubu ekrana na startu
-                    lastPoints[i][0] = start; //svatko dobije random pocetnu poziciju
-                    lastPoints[i][1] = new Point(start.X, start.Y-1); //svatko dobije random pocetnu poziciju
-                    novi.DrawCurve(pens[i], lastPoints[i]); 
+                    players[i].lastPoints[0] = start;
+                    players[i].lastPoints[1] = new Point(start.X, start.Y - 1); 
+                    //svatko dobije random pocetnu poziciju
+                    novi.DrawCurve(players[i].Pen, players[i].lastPoints); 
                     //pojavi se mala linija gdje je pocetak zmije, to se crta na sliku
                     g.DrawImage(currentState, new Point(0, 0)); //sad tu sliku crtamo na ekran
                 }
@@ -120,15 +143,45 @@ namespace CurveFever
             {
                 for (int i = 0; i < numberOfPlayers; i++)
                 {
-                    novi.DrawCurve(pens[i], lastPoints[i]); //spajamo zadnje dvije pozicije zmije
+                    novi.DrawCurve(players[i].Pen, players[i].lastPoints); //spajamo zadnje dvije pozicije zmije
                     g.DrawImage(currentState, new Point(0, 0));
                     Point p = new Point(
-                        Convert.ToInt32(lastPoints[i][1].X + radius * Math.Cos(headings[i])),
-                        Convert.ToInt32(lastPoints[i][1].Y + radius * Math.Sin(headings[i])));
-                    lastPoints[i][0] = lastPoints[i][1]; //dosad zadnja pozicija postaje predzadnja
-                    lastPoints[i][1] = p; //novonapravljena pozicija postaje zadnja
+                        Convert.ToInt32(players[i].lastPoints[0].X + radius * Math.Cos(players[i].heading)),
+                        Convert.ToInt32(players[i].lastPoints[1].Y + radius * Math.Sin(players[i].heading)));
+                    players[i].lastPoints[0] = players[i].lastPoints[1];
+                    players[i].lastPoints[1] = p;
+                    //dosad zadnja pozicija postaje predzadnja
+                    //novonapravljena pozicija postaje zadnja
+
+                    if(p.X<0 || p.Y<0 || p.X>width || p.Y > height)
+                    {
+                        //kad se zabije u zid umire, njegov trag ostaje na ekranu
+                        if (i < players.Count)
+                        {
+                            collide(players[i]);
+                            i = -1; //for petlja krece iz pocetka bez mrtve zmije
+                        }
+                    }
+                    else
+                    {
+                        //sudar zmije s nekim tragom
+                        //ovo ne radi tbh
+                        Color pixColor = currentState.GetPixel(players[i].lastPoints[1].X, players[i].lastPoints[1].Y);
+                        if (pixColor != null && pixColor != BackColor && pixColor != players[i].Pen.Color)
+                        {
+
+                            //collide(players[i]);
+                        }
+                    }
                 }
 
+            }
+
+            if (numberOfPlayers == 0)
+            {
+                novi.DrawString("gotovo", new Font("Arial",14), Brushes.White, new Point(0, 0));
+                g.DrawImage(currentState, new Point(0, 0));
+                //frozen slika tragova nakon sto svi umru
             }
 
             novi.Dispose(); //ovo mora idk ne pitajte nista

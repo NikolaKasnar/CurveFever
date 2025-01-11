@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
+
 namespace CurveFever
 {
+
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
@@ -12,7 +14,14 @@ namespace CurveFever
         public Keys LeftKey { get; set; }
         public Keys RightKey { get; set; }
 
+        public Pen Pen { get; set; }
+        //olovka kojom se crta zmija, za svaku razlièite boje
         public int score { get; set; }
+
+        public Point[] lastPoints { get; set; }
+        //zadnje dvije tocke u kojima se zmija nalazila
+        public float heading { get; set; }
+        //smjer u kojem se zmija krece
     }
     public partial class Form1 : Form
     {
@@ -25,14 +34,13 @@ namespace CurveFever
 
         private void InitializeComponents()
         {
-            
-            //u svrhu testiranja Game klase
-            //ona zasad ne radi za vise playera jer nisu definirane kontrole za njih
-            //za vidjeti meni treba ove dvije linije zakomentirati
-            //a ostalo u ovoj funkciji otkomentirati
-            int numberOfPlayers = 1;
-            StartGame(numberOfPlayers);
-            
+            //za testiranje same igrice
+            Player p = new Player();
+            p.LeftKey = Keys.A; p.RightKey = Keys.D;
+            Player p2 = new Player();
+            p2.LeftKey = Keys.J; p2.RightKey = Keys.L;
+            List<Player> list = new List<Player>() { p, p2 };
+            StartGame(list);
             /*
             // Crtanje pocetne forme i naslova
             this.Text = "CurveFever";
@@ -103,26 +111,15 @@ namespace CurveFever
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
-                SplitterDistance = 3*Width/4,
+                SplitterDistance = 5*Width/7,
                 BorderStyle = BorderStyle.None,
                 IsSplitterFixed = true
             };
             this.Controls.Add(splitContainer);
 
-            // Lijevi container(igra)
-            /*Panel gamePanel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = System.Drawing.Color.Black
-            };
-            // Dodavanje zutog bordera
-            gamePanel.Paint += GamePanel_Paint;
-            splitContainer.Panel1.Controls.Add(gamePanel);*/
-
             //lijevi container, s novim Game objektom
-            Game game = new Game(numberOfPlayers);
+            Game game = new Game(players);
             splitContainer.Panel1.Controls.Add(game);
-            splitContainer.Panel1.Paint += GamePanel_Paint;
 
             // Desni container
             Panel scorePanel = new Panel 

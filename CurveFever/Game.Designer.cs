@@ -35,7 +35,7 @@
             // timer1
             // 
             timer1.Enabled = true;
-            timer1.Interval = 50;
+            timer1.Interval = 40;
             timer1.Tick += TimerTick;
             // 
             // Game
