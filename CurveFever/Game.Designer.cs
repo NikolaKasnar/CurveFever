@@ -35,7 +35,7 @@
             // timer1
             // 
             timer1.Enabled = true;
-            timer1.Interval = 40;
+            timer1.Interval = 30;
             timer1.Tick += TimerTick;
             // 
             // Game
@@ -44,8 +44,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
             BorderStyle = BorderStyle.FixedSingle;
+            ForeColor = SystemColors.ControlLight;
             Name = "Game";
-            Size = new Size(1050, 800);
+            Size = new Size(1116, 800);
             ResumeLayout(false);
         }
 
