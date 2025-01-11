@@ -12,7 +12,11 @@ namespace CurveFever
     {
         public string Name { get; set; }
         public Keys LeftKey { get; set; }
+        public bool left {  get; set; }
+        //je li tipka za lijevo trenutno pritisnuta
         public Keys RightKey { get; set; }
+        public bool right { get; set; }
+        //je li tipka za desno trenutno pritisnuta
 
         public Pen Pen { get; set; }
         //olovka kojom se crta zmija, za svaku razlièite boje
@@ -116,6 +120,7 @@ namespace CurveFever
                 IsSplitterFixed = true
             };
             this.Controls.Add(splitContainer);
+            MessageBox.Show(splitContainer.Panel1.Width.ToString());
 
             //lijevi container, s novim Game objektom
             Game game = new Game(players);
