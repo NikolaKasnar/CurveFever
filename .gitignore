@@ -1,0 +1,17 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/CurveFever/obj/Debug/net8.0-windows/ref/CurveFever.dll
+/CurveFever/bin/Debug/net8.0-windows/CurveFever.dll
+/CurveFever/bin/Debug/net8.0-windows/CurveFever.exe
+/CurveFever/bin/Debug/net8.0-windows/CurveFever.pdb
+/CurveFever/bin/Debug/net8.0-windows/CurveFever.runtimeconfig.json
+/CurveFever/obj/Debug/net8.0-windows/ref/CurveFever.dll
+/CurveFever/obj/Debug/net8.0-windows/refint/CurveFever.dll
+/CurveFever/obj/Debug/net8.0-windows
+/CurveFever/obj/CurveFever.csproj.nuget.dgspec.json
+/CurveFever/obj/CurveFever.csproj.nuget.g.props
+/CurveFever/obj/project.assets.json
+/CurveFever/obj/project.nuget.cache
