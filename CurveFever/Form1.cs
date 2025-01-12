@@ -34,6 +34,20 @@ namespace CurveFever
         public Form1()
         {
             InitializeComponents();
+
+            // Potrebno dodati ovo dvoje kako bi Esc radio u cijeloj formi prije ostalih kontrola
+            this.KeyPreview = true;
+            this.KeyDown += Form1_KeyDown;
+        }
+
+        // Pritiskom tipke Esc vracamo se na main menu
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Controls.Clear();
+                InitializeComponents();
+            }
         }
 
         private void InitializeComponents()
