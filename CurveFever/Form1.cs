@@ -3,16 +3,29 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
+
 namespace CurveFever
 {
+
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
         public string Name { get; set; }
         public Keys LeftKey { get; set; }
+        public bool left {  get; set; }
+        //je li tipka za lijevo trenutno pritisnuta
         public Keys RightKey { get; set; }
+        public bool right { get; set; }
+        //je li tipka za desno trenutno pritisnuta
 
+        public Pen Pen { get; set; }
+        //olovka kojom se crta zmija, za svaku razlièite boje
         public int score { get; set; }
+
+        public Point[] lastPoints { get; set; }
+        //zadnje dvije tocke u kojima se zmija nalazila
+        public float heading { get; set; }
+        //smjer u kojem se zmija krece
     }
     public partial class Form1 : Form
     {
@@ -25,6 +38,14 @@ namespace CurveFever
 
         private void InitializeComponents()
         {
+            //za testiranje same igrice
+            Player p = new Player();
+            p.LeftKey = Keys.A; p.RightKey = Keys.D;
+            Player p2 = new Player();
+            p2.LeftKey = Keys.J; p2.RightKey = Keys.L;
+            List<Player> list = new List<Player>() { p, p2 };
+            StartGame(list);
+            /*
             // Crtanje pocetne forme i naslova
             this.Text = "CurveFever";
             this.Size = new System.Drawing.Size(800, 600);
@@ -59,7 +80,7 @@ namespace CurveFever
                 Location = new System.Drawing.Point(360, 180)
             };
             btnExit.Click += BtnExit_Click;
-            this.Controls.Add(btnExit);
+            this.Controls.Add(btnExit);*/
         }
 
         // Klikom na gumb Start Game otvara se forma za odabir broja igraca
@@ -85,7 +106,7 @@ namespace CurveFever
             // Obrisemo prijasnji ekran
             this.Controls.Clear();
 
-            this.Size = new System.Drawing.Size(1500, 1000);
+            this.Size = new System.Drawing.Size(1400, 800);
 
             int numberOfPlayers = players.Count;
 
@@ -94,21 +115,16 @@ namespace CurveFever
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
-                SplitterDistance = this.Width / 2,
+                SplitterDistance = 5*Width/7,
                 BorderStyle = BorderStyle.None,
                 IsSplitterFixed = true
             };
             this.Controls.Add(splitContainer);
+            MessageBox.Show(splitContainer.Panel1.Width.ToString());
 
-            // Lijevi container(igra)
-            Panel gamePanel = new Panel
-            {
-                Dock = DockStyle.Fill,
-                BackColor = System.Drawing.Color.Black
-            };
-            // Dodavanje zutog bordera
-            gamePanel.Paint += GamePanel_Paint;
-            splitContainer.Panel1.Controls.Add(gamePanel);
+            //lijevi container, s novim Game objektom
+            Game game = new Game(players);
+            splitContainer.Panel1.Controls.Add(game);
 
             // Desni container
             Panel scorePanel = new Panel 
@@ -116,6 +132,7 @@ namespace CurveFever
                 Dock = DockStyle.Fill,
                 BackColor = System.Drawing.Color.Black 
             };
+            
             // Sav tekst u desnom containeru
             Label lblRaceTo = new Label
             {
@@ -166,7 +183,7 @@ namespace CurveFever
                 AutoSize = true
             };
             scorePanel.Controls.Add(lblEscapeToQuit);
-
+            
             splitContainer.Panel2.Controls.Add(scorePanel);
         }
 
@@ -181,12 +198,6 @@ namespace CurveFever
                     e.Graphics.DrawRectangle(yellowPen, 0, 0, panel.Width - 1, panel.Height - 1);
                 }
             }
-        }
-
-        // Nisam bio siguran ni u dz ali pretpostavljam da ovaj laod mora ostati?
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
     }
 
