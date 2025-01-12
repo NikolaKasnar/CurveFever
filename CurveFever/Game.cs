@@ -54,7 +54,7 @@ namespace CurveFever
                 LeftKeys.Add(players[i].LeftKey);
                 RightKeys.Add(players[i].RightKey);
                 Color c = new Color();
-                c=players[i].Pen.Color;
+                c = players[i].Pen.Color;
                 colors.Add(c);
                 players[i].heading = 0.0f;
             }
@@ -104,7 +104,7 @@ namespace CurveFever
                 }
                 //pritisnuta je tipka za desno kod i-tog igraca
             }
-            
+
         }
 
         private void GameKeyUp(object? sender, KeyEventArgs e)
@@ -137,7 +137,7 @@ namespace CurveFever
                 players.Remove(i);
                 numberOfPlayers--;
             }
-                
+
         }
 
         private void GamePaint(object sender, PaintEventArgs e)
@@ -159,7 +159,7 @@ namespace CurveFever
                     Point start = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
                     //da nije bas na rubu ekrana na startu
                     players[i].lastPoints[0] = start;
-                    players[i].lastPoints[1] = new Point(start.X, start.Y - 1); 
+                    players[i].lastPoints[1] = new Point(start.X, start.Y - 1);
                     //svatko dobije random pocetnu poziciju
                     novi.DrawCurve(players[i].Pen, players[i].lastPoints);
                     Color pixColor = currentState.GetPixel(players[i].lastPoints[0].X, players[i].lastPoints[0].Y);
@@ -188,7 +188,7 @@ namespace CurveFever
                     players[i].lastPoints[1] = p;
                     //dosad zadnja pozicija postaje predzadnja
                     //novonapravljena pozicija postaje zadnja
-                    if (p.X<0 || p.Y<0 || p.X>width || p.Y > height)
+                    if (p.X < 0 || p.Y < 0 || p.X > width || p.Y > height)
                     {
                         //kad se zabije u zid umire, njegov trag ostaje na ekranu
                         if (i < players.Count)
@@ -201,9 +201,9 @@ namespace CurveFever
                     {
                         //sudar zmije s nekim tragom
                         //ovo ne radi tbh
-                        if(p.X < width && p.Y < height)
+                        if (p.X < width && p.Y < height)
                         {
-                            Color pixColor = currentState.GetPixel(p.X,p.Y);
+                            Color pixColor = currentState.GetPixel(p.X, p.Y);
 
                             if (colors.Contains(pixColor))
                             {
@@ -216,7 +216,7 @@ namespace CurveFever
                                 if (players[i].right) MoveRight(i);
                             }
                         }
-                        
+
                     }
                 }
 
@@ -224,13 +224,17 @@ namespace CurveFever
 
             if (numberOfPlayers == 0)
             {
-               novi.DrawString("gotovo", new Font("Arial", 14), Brushes.White, new Point(0, 0));
-               g.DrawImage(currentState, new Point(0, 0));
-               //frozen slika tragova nakon sto svi umru
+                novi.DrawString("gotovo", new Font("Arial", 14), Brushes.White, new Point(0, 0));
+                g.DrawImage(currentState, new Point(0, 0));
+                //frozen slika tragova nakon sto svi umru
             }
 
             novi.Dispose(); //ovo mora idk ne pitajte nista
         }
 
+        private void Game_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

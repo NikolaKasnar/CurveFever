@@ -40,13 +40,15 @@
             // 
             // Game
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
             BorderStyle = BorderStyle.FixedSingle;
             ForeColor = SystemColors.ControlLight;
+            Margin = new Padding(3, 4, 3, 4);
             Name = "Game";
-            Size = new Size(1116, 800);
+            Size = new Size(1275, 1067);
+            Load += Game_Load;
             ResumeLayout(false);
         }
 

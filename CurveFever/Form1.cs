@@ -34,6 +34,20 @@ namespace CurveFever
         public Form1()
         {
             InitializeComponents();
+
+            // Potrebno dodati ovo dvoje kako bi Esc radio u cijeloj formi prije ostalih kontrola
+            this.KeyPreview = true;
+            this.KeyDown += Form1_KeyDown;
+        }
+
+        // Pritiskom tipke Esc vracamo se na main menu
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Controls.Clear();
+                InitializeComponents();
+            }
         }
 
         private void InitializeComponents()
@@ -163,6 +177,21 @@ namespace CurveFever
                 AutoSize = true
             };
             scorePanel.Controls.Add(lblPointDifference);
+
+            // Dodajemo dinamicki rezultate igraca
+            string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
+            for (int i = 0; i < players.Count; i++)
+            {
+                Label playerScoreLabel = new Label
+                {
+                    Text = $"{players[i].Name} {players[i].score}",
+                    Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
+                    ForeColor = Color.FromName(colors[i % colors.Length]),
+                    Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
+                    AutoSize = true
+                };
+                scorePanel.Controls.Add(playerScoreLabel);
+            }
 
             Label lblSpaceToPlay = new Label
             {
