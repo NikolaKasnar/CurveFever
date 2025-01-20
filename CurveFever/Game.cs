@@ -29,8 +29,6 @@ namespace CurveFever
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
         bool start; //je li pocetna pozicija ili ne
         Bitmap currentState; //slika u koju se sprema trenutni izgled ekrana
-        const float curve = 0.05f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
-        int radius = 5; //radijus kruznice po kojoj skrece
 
         public Game(List<Player> players)
         {
@@ -47,16 +45,13 @@ namespace CurveFever
             colors = new List<Color>(numberOfPlayers);
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                players[i].lastPoints = new Point[2];
+                players[i].GeneratePosition(width, height);
                 players[i].Pen = pens[i];
-                players[i].left = false;
-                players[i].right = false;
                 LeftKeys.Add(players[i].LeftKey);
                 RightKeys.Add(players[i].RightKey);
                 Color c = new Color();
                 c = players[i].Pen.Color;
                 colors.Add(c);
-                players[i].heading = 0.0f;
             }
 
             currentState = new Bitmap(width, height);
@@ -120,15 +115,6 @@ namespace CurveFever
         }
 
 
-        private void MoveLeft(int player)
-        {
-            players[player].heading -= curve;
-        }
-
-        private void MoveRight(int player)
-        {
-            players[player].heading += curve;
-        }
 
         private void collide(Player i)
         {
@@ -151,18 +137,13 @@ namespace CurveFever
             if (start) //dodjeljivanje pocetnih pozicija
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-                Random rnd = new Random();
+                novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, width, height));
 
                 for (int i = 0; i < numberOfPlayers; i++)
                 {
-                    Point start = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
-                    //da nije bas na rubu ekrana na startu
-                    players[i].lastPoints[0] = start;
-                    players[i].lastPoints[1] = new Point(start.X, start.Y - 1);
                     //svatko dobije random pocetnu poziciju
-                    novi.DrawCurve(players[i].Pen, players[i].lastPoints);
-                    Color pixColor = currentState.GetPixel(players[i].lastPoints[0].X, players[i].lastPoints[0].Y);
+                    novi.DrawCurve(players[i].Pen, players[i].LastPoints);
+                    Color pixColor = currentState.GetPixel(players[i].LastPoints[0].X, players[i].LastPoints[0].Y);
                     pix = pixColor.Name;
                     //novi.DrawString(pixColor.Name, new Font("Arial", 14), Brushes.White, new Point(0, 0));
 
@@ -179,46 +160,59 @@ namespace CurveFever
             {
                 for (int i = 0; i < numberOfPlayers; i++)
                 {
-                    novi.DrawCurve(players[i].Pen, players[i].lastPoints); //spajamo zadnje dvije pozicije zmije
-                    g.DrawImage(currentState, new Point(0, 0));
-                    Point p = new Point(
-                        Convert.ToInt32(players[i].lastPoints[0].X + radius * Math.Cos(players[i].heading)),
-                        Convert.ToInt32(players[i].lastPoints[1].Y + radius * Math.Sin(players[i].heading)));
-                    players[i].lastPoints[0] = players[i].lastPoints[1];
-                    players[i].lastPoints[1] = p;
-                    //dosad zadnja pozicija postaje predzadnja
-                    //novonapravljena pozicija postaje zadnja
-                    if (p.X < 0 || p.Y < 0 || p.X > width || p.Y > height)
+                    novi.DrawLine(players[i].Pen, players[i].LastPoints[0],
+                        players[i].LastPoints[1]); //spajamo zadnje dvije pozicije zmije
+                    
+                    players[i].Move();
+                    if (players[i].CollidedWithWall())
                     {
-                        //kad se zabije u zid umire, njegov trag ostaje na ekranu
                         if (i < players.Count)
                         {
                             collide(players[i]);
-                            i = -1; //for petlja krece iz pocetka bez mrtve zmije
+                            // i = -1; //for petlja krece iz pocetka bez mrtve zmije
+                            //kad se zabije u zid umire, njegov trag ostaje na ekranu
                         }
-                    }
-                    else
+                    } else
                     {
-                        //sudar zmije s nekim tragom
-                        //ovo ne radi tbh
-                        if (p.X < width && p.Y < height)
+                        Color pixColor = currentState.GetPixel(players[i].LastPoints[1].X,
+                            players[i].LastPoints[1].Y);
+                        // Ako boja nije skroz crna to znaci da se u nesto zabio!
+                        if (pixColor.R != 0 || pixColor.G != 0 || pixColor.B != 0) 
                         {
-                            Color pixColor = currentState.GetPixel(p.X, p.Y);
-
-                            if (colors.Contains(pixColor))
+                            if (i < players.Count)
                             {
                                 collide(players[i]);
-                                i = -1;
-                            }
-                            else //nema sudara za i-tog igraca
-                            {
-                                if (players[i].left) MoveLeft(i);
-                                if (players[i].right) MoveRight(i);
+                                // i = -1; //for petlja krece iz pocetka bez mrtve zmije
+                                //kad se zabije u zid umire, njegov trag ostaje na ekranu
                             }
                         }
-
                     }
-                }
+                        /*
+                        else
+                        {
+                            //sudar zmije s nekim tragom
+                            //ovo ne radi tbh
+                            /*
+                            if (p.X < width && p.Y < height)
+                            {
+                                Color pixColor = currentState.GetPixel(p.X, p.Y);
+
+                                if (colors.Contains(pixColor))
+                                {
+                                    collide(players[i]);
+                                    i = -1;
+                                }
+                                else //nema sudara za i-tog igraca
+                                {
+                                    if (players[i].left) MoveLeft(i);
+                                    if (players[i].right) MoveRight(i);
+                                }
+                            }
+
+                        }
+                            */
+                    }
+                    g.DrawImage(currentState, new Point(0, 0));
 
             }
 
