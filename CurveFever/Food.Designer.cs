@@ -1,6 +1,6 @@
 ﻿namespace CurveFever
 {
-    partial class Game
+    partial class Food
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,31 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            timer1 = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             // 
-            // timer1
+            // Food
             // 
-            timer1.Enabled = true;
-            timer1.Interval = 30;
-            timer1.Tick += TimerTick;
-            // 
-            // Game
-            // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.Black;
-            BorderStyle = BorderStyle.FixedSingle;
-            ForeColor = SystemColors.ControlLight;
-            Margin = new Padding(3, 4, 3, 4);
-            Name = "Game";
-            Size = new Size(1275, 1067);
+            Name = "Food";
+            Size = new Size(8, 8);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private System.Windows.Forms.Timer timer1;
     }
 }

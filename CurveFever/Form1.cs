@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 
@@ -10,9 +11,22 @@ namespace CurveFever
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
+        public double curve = 0.06f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
+        public double speed = 5.0; //radijus kruznice po kojoj skrece
+
+        public Player()
+        {
+            left = false;
+            right = false;
+            heading = 0.0f;
+            alive = true;
+        }
+
+        public bool alive;
         public string Name { get; set; }
         public Keys LeftKey { get; set; }
-        public bool left {  get; set; }
+        
+        public bool left { get; set; }
         //je li tipka za lijevo trenutno pritisnuta
         public Keys RightKey { get; set; }
         public bool right { get; set; }
@@ -22,10 +36,63 @@ namespace CurveFever
         //olovka kojom se crta zmija, za svaku razlièite boje
         public int score { get; set; }
 
-        public Point[] lastPoints { get; set; }
+        private double last_x, last_y;
+        private double cur_x, cur_y;
+
+        public int game_width {  get; set; }
+        public int game_height { get; set; }
+
+        public void GeneratePosition(int game_width, int game_height)
+        {
+            this.game_width = game_width;
+            this.game_height = game_height;
+
+            Random rnd = new Random();
+            cur_x = Convert.ToDouble(rnd.Next(20, game_width - 200));
+            cur_y = Convert.ToDouble(rnd.Next(20, game_height - 20));
+            //da nije bas na preblizu (desnom) rubu na startu
+            last_x = cur_x + 5;
+            last_y = cur_y;
+            last_points = new Point[2];
+            last_points[0] = new Point();
+            last_points[1] = new Point();
+        }
+        private Point[] last_points;
+        public Point[] LastPoints {
+            get {
+                last_points[0].X = Convert.ToInt32(last_x);
+                last_points[0].Y = Convert.ToInt32(last_y);
+                last_points[1].X = Convert.ToInt32(cur_x);
+                last_points[1].Y = Convert.ToInt32(cur_y);
+                return last_points;
+            }
+        }
         //zadnje dvije tocke u kojima se zmija nalazila
-        public float heading { get; set; }
+        private double heading;
         //smjer u kojem se zmija krece
+        public void Move()
+        {
+            if (right) MoveRight();
+            if (left) MoveLeft();
+            last_x = cur_x;
+            last_y = cur_y;
+            cur_x = last_x + speed * Math.Cos(heading);
+            cur_y = last_y + speed * Math.Sin(heading);
+        }
+        private void MoveLeft()
+        {
+            heading -= curve;
+        }
+
+        private void MoveRight()
+        {
+            heading += curve;
+        }
+        public bool CollidedWithWall()
+        {
+            return cur_x > game_width || cur_x < 0 || cur_y > game_height || cur_y < 0;
+        }
+
     }
     public partial class Form1 : Form
     {
@@ -34,6 +101,20 @@ namespace CurveFever
         public Form1()
         {
             InitializeComponents();
+
+            // Potrebno dodati ovo dvoje kako bi Esc radio u cijeloj formi prije ostalih kontrola
+            this.KeyPreview = true;
+            this.KeyDown += Form1_KeyDown;
+        }
+
+        // Pritiskom tipke Esc vracamo se na main menu
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Controls.Clear();
+                InitializeComponents();
+            }
         }
 
         private void InitializeComponents()
@@ -120,7 +201,7 @@ namespace CurveFever
                 IsSplitterFixed = true
             };
             this.Controls.Add(splitContainer);
-            MessageBox.Show(splitContainer.Panel1.Width.ToString());
+            //MessageBox.Show(splitContainer.Panel1.Width.ToString());
 
             //lijevi container, s novim Game objektom
             Game game = new Game(players);
@@ -163,6 +244,21 @@ namespace CurveFever
                 AutoSize = true
             };
             scorePanel.Controls.Add(lblPointDifference);
+
+            // Dodajemo dinamicki rezultate igraca
+            string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
+            for (int i = 0; i < players.Count; i++)
+            {
+                Label playerScoreLabel = new Label
+                {
+                    Text = $"{players[i].Name} {players[i].score}",
+                    Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
+                    ForeColor = Color.FromName(colors[i % colors.Length]),
+                    Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
+                    AutoSize = true
+                };
+                scorePanel.Controls.Add(playerScoreLabel);
+            }
 
             Label lblSpaceToPlay = new Label
             {
