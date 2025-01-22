@@ -11,15 +11,18 @@ namespace CurveFever
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
-        private const double curve = 0.05f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
-        private const double speed = 5.0; //radijus kruznice po kojoj skrece
+        public double curve = 0.06f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
+        public double speed = 5.0; //radijus kruznice po kojoj skrece
 
         public Player()
         {
             left = false;
             right = false;
             heading = 0.0f;
+            alive = true;
         }
+
+        public bool alive;
         public string Name { get; set; }
         public Keys LeftKey { get; set; }
         
@@ -35,18 +38,21 @@ namespace CurveFever
 
         private double last_x, last_y;
         private double cur_x, cur_y;
-        private int game_width, game_height;
+
+        public int game_width {  get; set; }
+        public int game_height { get; set; }
+
         public void GeneratePosition(int game_width, int game_height)
         {
             this.game_width = game_width;
             this.game_height = game_height;
 
             Random rnd = new Random();
-            cur_x = Convert.ToDouble(rnd.Next(10, game_width - 10));
-            cur_y = Convert.ToDouble(rnd.Next(10, game_height - 10));
-            //da nije bas na rubu ekrana na startu
-            last_x = cur_x;
-            last_y = cur_y - 1.0;
+            cur_x = Convert.ToDouble(rnd.Next(20, game_width - 200));
+            cur_y = Convert.ToDouble(rnd.Next(20, game_height - 20));
+            //da nije bas na preblizu (desnom) rubu na startu
+            last_x = cur_x + 5;
+            last_y = cur_y;
             last_points = new Point[2];
             last_points[0] = new Point();
             last_points[1] = new Point();
@@ -195,7 +201,7 @@ namespace CurveFever
                 IsSplitterFixed = true
             };
             this.Controls.Add(splitContainer);
-            MessageBox.Show(splitContainer.Panel1.Width.ToString());
+            //MessageBox.Show(splitContainer.Panel1.Width.ToString());
 
             //lijevi container, s novim Game objektom
             Game game = new Game(players);
