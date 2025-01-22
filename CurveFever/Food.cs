@@ -12,16 +12,30 @@ namespace CurveFever
 {
     public partial class Food : UserControl
     {
-        /*popis tipova (ucinaka hrane):
-        1 - brisu se svi tragovi
-        2 - zmija ide brze
-        3 - zmija ide sporije
-        4 - sve ostale zmije idu brze
-        5 - podebljanje traga zmije
-        */
-
+        public enum Effects // tip efekta koji hrana može imati
+        {
+            None,
+            Erase, // brisu se svi tragovi
+            Faster, // zmija ide brze
+            Slower, // zmija ide sporije
+            OtherFaster, // sve ostale zmije idu brze
+            Thicker, // podebljanje traga zmije
+            AfterLast,
+            First = Erase,
+        }
         public Point Point { get; set; }
-        public int type { get; set; }
+        public Effects type { get; set; }
+        public Effects AntiType
+        {
+            get
+            {
+                return type switch
+                {
+                    Effects.OtherFaster => Effects.Faster,
+                    _ => Effects.None,
+                };
+            }
+        }
         public int width { get; set; }
         public int height { get; set; }
         public Color color { get; set; }
@@ -32,20 +46,31 @@ namespace CurveFever
             InitializeComponent();
             Random rnd = new Random();
             Point = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
-            type = rnd.Next(1, 6);
+            type = (Effects) rnd.Next((int) Effects.First, (int) Effects.AfterLast);
 
-
-            if(type == 1) color = Color.SeaGreen;
-            if(type == 2) color = Color.HotPink;
-            if(type == 3) color = Color.SaddleBrown;
-            if(type == 4) color = Color.Silver;
-            if(type == 5) color = Color.White;
+            switch (type)
+            {
+                case Effects.Erase:
+                    color = Color.SeaGreen;
+                    break;
+                case Effects.Faster:
+                    color = Color.HotPink;
+                    break;
+                case Effects.Slower:
+                    color = Color.SaddleBrown;
+                    break;
+                case Effects.OtherFaster:
+                    color = Color.Silver;
+                    break;
+                case Effects.Thicker:
+                    color = Color.White;
+                    break;
+            }
 
             this.width = width;
             this.height = height;
             Size = new Size(15,15);
         }
-
 
         public bool checkHunger(Player player)
         {
@@ -56,33 +81,6 @@ namespace CurveFever
                 return true;
             }
             return false;
-        }
-
-        public int eat(Player player)
-        {
-            //ucinci tipova 1 i 4 kontroliraju se u klasi Game
-            if(type == 1)
-            {
-                return 1;
-            }
-            if (type == 2)
-            {
-                player.speed += 1;
-            }
-            if (type == 3)
-            {
-                player.speed -= 0.5;
-            }
-            if (type == 4)
-            {
-                return 4;
-            }
-            if(type == 5)
-            {
-                float size = player.Pen.Width;
-                player.Pen = new Pen(player.Pen.Color, size + 3);
-            }
-            return 0;
         }
     }
 }

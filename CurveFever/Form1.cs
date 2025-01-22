@@ -22,6 +22,7 @@ namespace CurveFever
             right = false;
             heading = 0.0f;
             alive = true;
+            effects = new List<PlayerEffect> { };
         }
 
         public bool alive;
@@ -40,9 +41,22 @@ namespace CurveFever
 
         private double last_x, last_y;
         private double cur_x, cur_y;
+        private int counter;
 
         public int game_width {  get; set; }
         public int game_height { get; set; }
+        private class PlayerEffect
+        {
+            public Food.Effects type;
+            public int countdown;
+            public PlayerEffect(Food.Effects type)
+            {
+                this.type = type;
+                countdown = 300;
+            }
+        }
+        private List<PlayerEffect> effects;
+        private Rectangle dot;
 
         public void GeneratePosition(int game_width, int game_height)
         {
@@ -58,6 +72,8 @@ namespace CurveFever
             last_points = new Point[2];
             last_points[0] = new Point();
             last_points[1] = new Point();
+            counter = 0;
+            GetDot();
         }
         private Point[] last_points;
         public Point[] LastPoints {
@@ -80,6 +96,37 @@ namespace CurveFever
             last_y = cur_y;
             cur_x = last_x + speed * Math.Cos(heading);
             cur_y = last_y + speed * Math.Sin(heading);
+            foreach (PlayerEffect effect in effects)
+            {
+                effect.countdown--;
+            }
+            if (effects.Count > 0 && effects[0].countdown <= 0)
+            {
+                UnEat(effects[0].type);
+                effects.RemoveAt(0);
+            }
+        }
+        private Rectangle GetDot()
+        {
+            dot = new Rectangle();
+            dot.X = Convert.ToInt32(cur_x - Pen.Width / 2);
+            dot.Y = Convert.ToInt32(cur_y - Pen.Width / 2);
+            dot.Width = Convert.ToInt32(Pen.Width);
+            dot.Height = Convert.ToInt32(Pen.Width);
+            return dot;
+        }
+        public void DrawDot(Graphics g)
+        {
+            g.FillEllipse(Pen.Brush, GetDot());
+        }
+        public void Draw(Graphics novi)
+        {
+            // novi.FillEllipse(new SolidBrush(Color.Black), dot);
+            counter++;
+            if (counter % 100 < 95)
+            {
+                novi.DrawLine(Pen, LastPoints[0], LastPoints[1]);
+            }
         }
         private void MoveLeft()
         {
@@ -94,25 +141,41 @@ namespace CurveFever
         {
             return cur_x > game_width || cur_x < 0 || cur_y > game_height || cur_y < 0;
         }
-        public void Eat(Food food)
+        public void Eat(Food.Effects effect)
         {
-            switch (food.type)
+            switch (effect)
             {
-                case 2:
-                    speed += 1;
+                case Food.Effects.Faster:
+                    speed += 2.5;
                     break;
-                case 3:
-                    speed -= 1;
+                case Food.Effects.Slower:
+                    speed -= 1.5;
                     break;
-                case 5:
+                case Food.Effects.Thicker:
                     Pen = new Pen(Pen.Color, Pen.Width + 3);
                     break;
                 default:
                     return;
             }
-            food.type = 0;
+            effects.Add(new PlayerEffect(effect));
         }
-
+        public void UnEat(Food.Effects effect)
+        {
+            switch (effect)
+            {
+                case Food.Effects.Faster:
+                    speed -= 2.5;
+                    break;
+                case Food.Effects.Slower:
+                    speed += 1.5;
+                    break;
+                case Food.Effects.Thicker:
+                    Pen = new Pen(Pen.Color, Pen.Width - 3);
+                    break;
+                default:
+                    return;
+            }
+        }
     }
     public partial class Form1 : Form
     {

@@ -27,7 +27,7 @@ namespace CurveFever
         List<Food> foods; //hrana koja je trenutno na ekranu
         int numberOfPlayers;
         int livingPlayers;
-        static int penSize = 5;
+        static int penSize = 4;
         Pen[] pens = { new Pen(Color.Red, penSize), new Pen(Color.Yellow, penSize), new Pen(Color.Azure, penSize),
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
         bool beginGame; //je li igra zapoceta/pauzirana (pritiskom SPACE)
@@ -52,8 +52,8 @@ namespace CurveFever
             foods = new List<Food>(3);
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                players[i].GeneratePosition(width, height);
                 players[i].Pen = pens[i];
+                players[i].GeneratePosition(width, height);
                 LeftKeys.Add(players[i].LeftKey);
                 RightKeys.Add(players[i].RightKey);
                 Color c = new Color();
@@ -176,19 +176,22 @@ namespace CurveFever
             {
                 if (foods[j].checkHunger(player))
                 {
-                    player.Eat(foods[j]);
-                    if (foods[j].type == 1)
+                    player.Eat(foods[j].type);
+
+                    Food.Effects other = foods[j].AntiType;
+                    if (other != Food.Effects.None)
                     {
-                        //tip 1
-                        currentState = new Bitmap(width, height);
-                    }
-                    if (foods[j].type == 4)
-                    {
-                        //tip 4 - sve druge zmije postaju brze
                         for (int k = 0; k < numberOfPlayers; k++)
                         {
-                            if (!players[k].Equals(player)) players[k].speed += 2;
+                            if (!players[k].Equals(player))
+                                players[k].Eat(other);
                         }
+                    }
+
+                    if (foods[j].type == Food.Effects.Erase)
+                    {
+                        // brisanje cijelog ekrana
+                        currentState = new Bitmap(width, height);
                     }
 
                     //micanje hrane
@@ -216,9 +219,6 @@ namespace CurveFever
             {
                 if (player.alive)
                 {
-                    novi.DrawLine(player.Pen, player.LastPoints[0],
-                    player.LastPoints[1]); //spajamo zadnje dvije pozicije zmije
-
                     player.Move();
                     if (player.CollidedWithWall())
                     {
@@ -238,6 +238,8 @@ namespace CurveFever
                             collide(player);
                         }
                     }
+
+                    player.Draw(novi);
                 }
             }
     }
@@ -266,6 +268,10 @@ namespace CurveFever
 
             g.DrawImage(currentState, new Point(0, 0));
 
+            foreach (Player player in players)
+            {
+                player.DrawDot(g);
+            }
             novi.Dispose(); //ovo mora idk ne pitajte nista
         }
 
