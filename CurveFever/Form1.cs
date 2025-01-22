@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 
@@ -91,6 +93,24 @@ namespace CurveFever
         public bool CollidedWithWall()
         {
             return cur_x > game_width || cur_x < 0 || cur_y > game_height || cur_y < 0;
+        }
+        public void Eat(Food food)
+        {
+            switch (food.type)
+            {
+                case 2:
+                    speed += 1;
+                    break;
+                case 3:
+                    speed -= 1;
+                    break;
+                case 5:
+                    Pen = new Pen(Pen.Color, Pen.Width + 3);
+                    break;
+                default:
+                    return;
+            }
+            food.type = 0;
         }
 
     }

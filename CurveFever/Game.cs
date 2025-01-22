@@ -62,10 +62,7 @@ namespace CurveFever
             }
             for (int i = 0; i < foods.Capacity; i++)
             {
-                Random rnd = new Random();
-                Point p = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
-                int type = rnd.Next(1, 5);
-                foods.Add(new Food(type, p, width, height));
+                foods.Add(new Food(width, height));
             }
 
             currentState = new Bitmap(width, height);
@@ -153,17 +150,98 @@ namespace CurveFever
 
 
 
-        private void collide(Player i)
+        private void collide(Player player)
         {
-            if (players.Contains(i))
+            if (player.alive)
             {
-                i.alive = false;
+                player.alive = false;
                 livingPlayers--;
             }
                 
         }
+        private void SetupGame(Graphics novi, PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, width, height));
 
-        private void GamePaint(object sender, PaintEventArgs e)
+            for (int i = 0; i < numberOfPlayers; i++)
+            {
+                novi.DrawCurve(players[i].Pen, players[i].LastPoints);
+                //pojavi se mala linija gdje je pocetak zmije, to se crta na sliku
+            }
+        }
+        private bool CheckFoodCollision(Graphics novi, Player player)
+        {
+            for (int j = 0; j < foods.Count; j++)
+            {
+                if (foods[j].checkHunger(player))
+                {
+                    player.Eat(foods[j]);
+                    if (foods[j].type == 1)
+                    {
+                        //tip 1
+                        currentState = new Bitmap(width, height);
+                    }
+                    if (foods[j].type == 4)
+                    {
+                        //tip 4 - sve druge zmije postaju brze
+                        for (int k = 0; k < numberOfPlayers; k++)
+                        {
+                            if (!players[k].Equals(player)) players[k].speed += 2;
+                        }
+                    }
+
+                    //micanje hrane
+                    novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(foods[j].Point, foods[j].Size));
+                    foods.RemoveAt(j);
+                    j = -1;
+
+                    //dodavanje nove hrane, da uvijek bude 3 na terenu
+                    foods.Add(new Food(width, height));
+
+                    return true;
+                }
+            }
+            return false;
+        }
+        private void ActivePaint(Graphics novi)
+        {
+            foreach (Food food in foods)
+            {
+                //crtanje hrane
+                novi.FillRectangle(new SolidBrush(food.color), new Rectangle(food.Point, food.Size));
+            }
+
+            foreach (Player player in players)
+            {
+                if (player.alive)
+                {
+                    novi.DrawLine(player.Pen, player.LastPoints[0],
+                    player.LastPoints[1]); //spajamo zadnje dvije pozicije zmije
+
+                    player.Move();
+                    if (player.CollidedWithWall())
+                    {
+                        collide(player);
+                        continue;
+                        //kad se zabije u zid umire, njegov trag ostaje na ekranu
+                    }
+                    Color pixColor = currentState.GetPixel(player.LastPoints[1].X,
+                        player.LastPoints[1].Y);
+                    // Ako boja nije skroz crna to znaci da se u nesto zabio!
+                    if (pixColor.R != 0 || pixColor.G != 0 || pixColor.B != 0)
+                    {
+                        //prvo provjera je li se zabio u hranu
+                        if (!CheckFoodCollision(novi, player))
+                        {
+                            //ako se zabio u nesto osim hrane, umire
+                            collide(player);
+                        }
+                    }
+                }
+            }
+    }
+    private void GamePaint(object sender, PaintEventArgs e)
         {
             Graphics novi = Graphics.FromImage(currentState);
             //ovaj novi i bitmap currentState sluze za pamcenje stanja na grafici
@@ -173,114 +251,20 @@ namespace CurveFever
 
             if (!beginGame) //dodjeljivanje pocetnih pozicija
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, width, height));
-
-                for (int i = 0; i < numberOfPlayers; i++)
-                {
-                    novi.DrawCurve(players[i].Pen, players[i].LastPoints);
-                    //pojavi se mala linija gdje je pocetak zmije, to se crta na sliku
-                }
-
-                g.DrawImage(currentState, new Point(0, 0)); //sad tu sliku crtamo na ekran
+                SetupGame(novi, e);
             }
-            else if(!pauseGame)
+            else if (!pauseGame)
             {
-                
-                foreach (Food food in foods)
-                {
-                    //crtanje hrane
-                    novi.FillRectangle(new SolidBrush(food.color), new Rectangle(food.Point, food.Size));
-                }
-
-                for (int i = 0; i < numberOfPlayers; i++)
-                {
-                    if (players[i].alive)
-                    {
-                        novi.DrawLine(players[i].Pen, players[i].LastPoints[0],
-                        players[i].LastPoints[1]); //spajamo zadnje dvije pozicije zmije
-
-                        players[i].Move();
-                        if (players[i].CollidedWithWall())
-                        {
-                            if (i < players.Count)
-                            {
-                                collide(players[i]);
-                                i = -1; //for petlja krece iz pocetka bez mrtve zmije
-                                //kad se zabije u zid umire, njegov trag ostaje na ekranu
-                            }
-                        }
-                        else
-                        {
-                            Color pixColor = currentState.GetPixel(players[i].LastPoints[1].X,
-                                players[i].LastPoints[1].Y);
-                            // Ako boja nije skroz crna to znaci da se u nesto zabio!
-                            if (pixColor.R != 0 || pixColor.G != 0 || pixColor.B != 0)
-                            {
-                                if (i < players.Count)
-                                {
-                                    bool eating = false;
-
-                                    //prvo provjera je li se zabio u hranu
-                                    for(int j=0;j<foods.Count;j++)
-                                    {
-                                            if (foods[j].checkHunger(players[i])) 
-                                            {
-                                                eating = true;
-
-                                                if (foods[j].eat(players[i])==1)
-                                                {
-                                                    //tip 1
-                                                    currentState = new Bitmap(width, height);
-                                                }
-                                                if (foods[j].eat(players[i]) == 4)
-                                                {
-                                                    //tip 4 - sve druge zmije postaju brze
-                                                    for (int k = 0; k < numberOfPlayers; k++)
-                                                    {
-                                                        if(k!=i) players[k].speed += 2;
-                                                    }
-                                                }
-
-                                                //micanje hrane
-                                                novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(foods[j].Point, foods[j].Size));
-                                                foods.RemoveAt(j);
-                                                j = -1;
-
-                                                //dodavanje nove hrane, da uvijek bude 3 na terenu
-                                                Random rnd = new Random();
-                                                Point p = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
-                                                int type = rnd.Next(1, 5);
-                                                foods.Add(new Food(type, p, width, height));
-
-                                                break; //da ne provjerava ostalu hranu
-                                            }
-                                    }
-                                    if (!eating)
-                                    {
-                                        //ako se zabio u nesto osim hrane, umire
-                                        collide(players[i]);
-                                        i = -1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    g.DrawImage(currentState, new Point(0, 0));
-                }
+                ActivePaint(novi);
             }
-
-            if (pauseGame)
+            if (livingPlayers == 1)
             {
-                g.DrawImage(currentState, new Point(0, 0));
-            }
-
-            if (livingPlayers == 0)
-            {
+                pauseGame = true;
                 novi.DrawString("gotovo", new Font("Arial", 14), Brushes.White, new Point(0, 0));
-                g.DrawImage(currentState, new Point(0, 0));
                 //frozen slika tragova nakon sto svi umru
             }
+
+            g.DrawImage(currentState, new Point(0, 0));
 
             novi.Dispose(); //ovo mora idk ne pitajte nista
         }

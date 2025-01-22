@@ -27,11 +27,14 @@ namespace CurveFever
         public Color color { get; set; }
 
 
-        public Food(int type, Point point, int width, int height)
+        public Food(int width, int height)
         {
             InitializeComponent();
+            Random rnd = new Random();
+            Point = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
+            type = rnd.Next(1, 6);
 
-            this.type = type;
+
             if(type == 1) color = Color.SeaGreen;
             if(type == 2) color = Color.HotPink;
             if(type == 3) color = Color.SaddleBrown;
@@ -41,14 +44,13 @@ namespace CurveFever
             this.width = width;
             this.height = height;
             Size = new Size(15,15);
-            this.Point = point;
         }
 
 
         public bool checkHunger(Player player)
         {
             if (Math.Abs(Point.X - player.LastPoints[1].X) <= Size.Width
-                & Math.Abs(Point.Y - player.LastPoints[1].Y) <= Size.Height)
+                && Math.Abs(Point.Y - player.LastPoints[1].Y) <= Size.Height)
             {
                 //igrac se zabio u hranu
                 return true;
