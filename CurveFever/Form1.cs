@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 
@@ -11,23 +13,24 @@ namespace CurveFever
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
-        public double curve = 0.06f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
-        public double speed = 5.0; //radijus kruznice po kojoj skrece
+        public double curve = 0.06f; //kut za koji skrece
+        public double speed = 4.0; //radijus kruznice po kojoj skrece
 
         public Player()
         {
             left = false;
             right = false;
-            heading = 0.0f;
             alive = true;
+            effects = new List<PlayerEffect> { };
         }
 
         public bool alive;
         public string Name { get; set; }
+
         public Keys LeftKey { get; set; }
-        
         public bool left { get; set; }
         //je li tipka za lijevo trenutno pritisnuta
+
         public Keys RightKey { get; set; }
         public bool right { get; set; }
         //je li tipka za desno trenutno pritisnuta
@@ -37,10 +40,24 @@ namespace CurveFever
         public int score { get; set; }
 
         private double last_x, last_y;
+        private double prelast_x, prelast_y;
         private double cur_x, cur_y;
+        private int counter;
 
         public int game_width {  get; set; }
         public int game_height { get; set; }
+        private class PlayerEffect
+        {
+            public Food.Effects type;
+            public int countdown;
+            public PlayerEffect(Food.Effects type)
+            {
+                this.type = type;
+                countdown = 300;
+            }
+        }
+        private List<PlayerEffect> effects;
+        private Rectangle dot;
 
         public void GeneratePosition(int game_width, int game_height)
         {
@@ -48,42 +65,126 @@ namespace CurveFever
             this.game_height = game_height;
 
             Random rnd = new Random();
-            cur_x = Convert.ToDouble(rnd.Next(20, game_width - 200));
-            cur_y = Convert.ToDouble(rnd.Next(20, game_height - 20));
-            //da nije bas na preblizu (desnom) rubu na startu
-            last_x = cur_x + 5;
-            last_y = cur_y;
+
+            heading = rnd.NextDouble() * Math.PI * 2;
+
+            cur_x = Convert.ToDouble(rnd.Next(200, game_width - 200));
+            cur_y = Convert.ToDouble(rnd.Next(200, game_height - 200));
+            //da nije bas preblizu rubu na startu
+            last_x = cur_x - speed * Math.Cos(heading);
+            last_y = cur_y - speed * Math.Sin(heading);
+            prelast_x = last_x - speed * Math.Cos(heading);
+            prelast_y = last_y - speed * Math.Sin(heading);
             last_points = new Point[2];
             last_points[0] = new Point();
             last_points[1] = new Point();
+            counter = 0;
+            GetDot();
         }
         private Point[] last_points;
-        public Point[] LastPoints {
+        public Point[] LastPoints
+        { //zadnje dvije tocke u kojima se zmija nalazila
             get {
-                last_points[0].X = Convert.ToInt32(last_x);
-                last_points[0].Y = Convert.ToInt32(last_y);
-                last_points[1].X = Convert.ToInt32(cur_x);
-                last_points[1].Y = Convert.ToInt32(cur_y);
+                last_points[0].X = Convert.ToInt32(prelast_x);
+                last_points[0].Y = Convert.ToInt32(prelast_y);
+                last_points[1].X = Convert.ToInt32(last_x);
+                last_points[1].Y = Convert.ToInt32(last_y);
                 return last_points;
             }
         }
-        //zadnje dvije tocke u kojima se zmija nalazila
-        private double heading;
-        //smjer u kojem se zmija krece
+        
+        public Point CurrentPoint
+        { // Trenutna tocka na kojoj se zmija nalazi
+            get
+            {
+                return new Point(Convert.ToInt32(cur_x), Convert.ToInt32(cur_y));
+            }
+        }
+        private double heading; //smjer u kojem se zmija krece
+        private void LoopAroundScreen()
+        {
+            bool changed = false;
+            while (true) // da osiguramo da su trenutne pozicije unutar ekrana!
+            {
+                changed = false;
+                if (cur_x < 0)
+                {
+                    cur_x += game_width;
+                    changed = true;
+                }
+                if (cur_y < 0)
+                {
+                    cur_y += game_height;
+                    changed = true;
+                }
+                if (cur_x >= game_width)
+                {
+                    cur_x -= game_width;
+                    changed = true;
+                }
+                if (cur_y >= game_height)
+                {
+                    cur_y -= game_height;
+                    changed = true;
+                }
+                if (changed)
+                {
+                    last_x = cur_x;
+                    last_y = cur_y;
+                    prelast_x = cur_x;
+                    prelast_y = cur_y;
+                } else
+                {
+                    break;
+                }
+            }
+        }
         public void Move()
         {
+            counter++;
             if (right) MoveRight();
             if (left) MoveLeft();
+            prelast_x = last_x;
+            prelast_y = last_y;
             last_x = cur_x;
             last_y = cur_y;
             cur_x = last_x + speed * Math.Cos(heading);
             cur_y = last_y + speed * Math.Sin(heading);
+            LoopAroundScreen();
+            foreach (PlayerEffect effect in effects)
+            {
+                effect.countdown--;
+            }
+            if (effects.Count > 0 && effects[0].countdown <= 0)
+            {
+                UnEat(effects[0].type);
+                effects.RemoveAt(0);
+            }
+        }
+        private Rectangle GetDot()
+        {
+            dot = new Rectangle();
+            dot.X = Convert.ToInt32(cur_x - Pen.Width * 0.7);
+            dot.Y = Convert.ToInt32(cur_y - Pen.Width * 0.7);
+            dot.Width = Convert.ToInt32(Pen.Width * 1.4);
+            dot.Height = Convert.ToInt32(Pen.Width * 1.4);
+            return dot;
+        }
+        public void DrawDot(Graphics g)
+        {
+            g.FillEllipse(new SolidBrush(Color.Green), GetDot());
+        }
+        public void Draw(Graphics novi)
+        {
+            if (counter % 100 < 95)
+            {
+                novi.DrawLine(Pen, LastPoints[0], LastPoints[1]);
+            }
         }
         private void MoveLeft()
         {
             heading -= curve;
         }
-
         private void MoveRight()
         {
             heading += curve;
@@ -92,12 +193,48 @@ namespace CurveFever
         {
             return cur_x > game_width || cur_x < 0 || cur_y > game_height || cur_y < 0;
         }
-
+        public void Eat(Food.Effects effect)
+        {
+            switch (effect)
+            {
+                case Food.Effects.Faster:
+                    speed += 2;
+                    break;
+                case Food.Effects.Slower:
+                    speed -= 1;
+                    break;
+                case Food.Effects.Thicker:
+                    Pen = new Pen(Pen.Color, Pen.Width + 3);
+                    break;
+                default:
+                    return;
+            }
+            effects.Add(new PlayerEffect(effect));
+        }
+        public void UnEat(Food.Effects effect)
+        {
+            switch (effect)
+            {
+                case Food.Effects.Faster:
+                    speed -= 2;
+                    break;
+                case Food.Effects.Slower:
+                    speed += 1;
+                    break;
+                case Food.Effects.Thicker:
+                    Pen = new Pen(Pen.Color, Pen.Width - 3);
+                    break;
+                default:
+                    return;
+            }
+        }
     }
+
     public partial class Form1 : Form
     {
         private Button btnStartGame;
         private Button btnExit;
+        public SplitContainer splitContainer;
         public Form1()
         {
             InitializeComponents();
@@ -120,13 +257,16 @@ namespace CurveFever
         private void InitializeComponents()
         {
             //za testiranje same igrice
+            /*
             Player p = new Player();
             p.LeftKey = Keys.A; p.RightKey = Keys.D;
             Player p2 = new Player();
             p2.LeftKey = Keys.J; p2.RightKey = Keys.L;
             List<Player> list = new List<Player>() { p, p2 };
             StartGame(list);
-            /*
+            */
+
+            
             // Crtanje pocetne forme i naslova
             this.Text = "CurveFever";
             this.Size = new System.Drawing.Size(800, 600);
@@ -161,7 +301,8 @@ namespace CurveFever
                 Location = new System.Drawing.Point(360, 180)
             };
             btnExit.Click += BtnExit_Click;
-            this.Controls.Add(btnExit);*/
+            this.Controls.Add(btnExit);
+
         }
 
         // Klikom na gumb Start Game otvara se forma za odabir broja igraca
@@ -192,7 +333,7 @@ namespace CurveFever
             int numberOfPlayers = players.Count;
 
             // Napravimo SplitContainer; lijevo je igra, a desno prikaz rezultata
-            SplitContainer splitContainer = new SplitContainer
+            splitContainer = new SplitContainer
             {
                 Dock = DockStyle.Fill,
                 Orientation = Orientation.Vertical,
@@ -204,7 +345,7 @@ namespace CurveFever
             //MessageBox.Show(splitContainer.Panel1.Width.ToString());
 
             //lijevi container, s novim Game objektom
-            Game game = new Game(players);
+            Game game = new Game(players, splitContainer);
             splitContainer.Panel1.Controls.Add(game);
 
             // Desni container
@@ -246,19 +387,19 @@ namespace CurveFever
             scorePanel.Controls.Add(lblPointDifference);
 
             // Dodajemo dinamicki rezultate igraca
-            string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
-            for (int i = 0; i < players.Count; i++)
-            {
-                Label playerScoreLabel = new Label
+             string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
+                for (int i = 0; i < players.Count; i++)
                 {
-                    Text = $"{players[i].Name} {players[i].score}",
-                    Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
-                    ForeColor = Color.FromName(colors[i % colors.Length]),
-                    Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
-                    AutoSize = true
-                };
-                scorePanel.Controls.Add(playerScoreLabel);
-            }
+                    Label playerScoreLabel = new Label
+                    {
+                        Text = $"{players[i].Name} {players[i].score}",
+                        Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
+                        ForeColor = Color.FromName(colors[i % colors.Length]),
+                        Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
+                        AutoSize = true
+                    };
+                    scorePanel.Controls.Add(playerScoreLabel);
+                }
 
             Label lblSpaceToPlay = new Label
             {
@@ -282,20 +423,8 @@ namespace CurveFever
             
             splitContainer.Panel2.Controls.Add(scorePanel);
         }
-
-        // Panel nema svojstvo za boju bordera tako da ga moramo dodati ovako
-        private void GamePanel_Paint(object sender, PaintEventArgs e)
-        {
-            Panel panel = sender as Panel;
-            if (panel != null)
-            {
-                using (System.Drawing.Pen yellowPen = new System.Drawing.Pen(System.Drawing.Color.Yellow, 5))
-                {
-                    e.Graphics.DrawRectangle(yellowPen, 0, 0, panel.Width - 1, panel.Height - 1);
-                }
-            }
-        }
     }
+
 
     // Forma za unos broja igraca
     public class NumberOfPlayersForm : Form
@@ -394,6 +523,22 @@ namespace CurveFever
                 if (usedKeys.Contains(playerControl.LeftKey) || usedKeys.Contains(playerControl.RightKey))
                 {
                     MessageBox.Show($"Duplicate keys found for Player {playerControl.PlayerIndex}. Each key must be unique.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if(playerControl.LeftKey == playerControl.RightKey)
+                {
+                    MessageBox.Show("Odaberite dvije razlicite tipke za lijevo i desno!");
+                    return;
+                }
+
+                List<Keys> forbiddenKeys = new List<Keys>
+                    { Keys.Space, Keys.Escape, Keys.Up, Keys.Down, Keys.Left, Keys.Right};
+
+
+                if (forbiddenKeys.Contains(playerControl.LeftKey) || forbiddenKeys.Contains(playerControl.RightKey))
+                {
+                    MessageBox.Show("Odaberite tipke razlicite od strelica, ESC i SPACE");
                     return;
                 }
 
