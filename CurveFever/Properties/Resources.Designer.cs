@@ -109,5 +109,15 @@ namespace CurveFever.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] zidovi {
+            get {
+                object obj = ResourceManager.GetObject("zidovi", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

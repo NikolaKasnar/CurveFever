@@ -32,6 +32,10 @@ namespace CurveFever
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
         bool beginGame; //je li igra zapoceta/pauzirana (pritiskom SPACE)
         bool pauseGame;
+        private int ticks_until_wall; // koliko jos timer tick-ova dok se zid opet ne pojavi
+        // 0 ako se zid treba crtati
+        private Pen wall_pen;
+        private Rectangle wall_rect;
         Bitmap currentState; //slika u koju se sprema trenutni izgled ekrana
 
         public Game(List<Player> players)
@@ -68,6 +72,11 @@ namespace CurveFever
             currentState = new Bitmap(width, height);
             beginGame = false;
             pauseGame = true;
+
+            ticks_until_wall = 0;
+            wall_pen = new Pen(new SolidBrush(Color.DarkBlue), 8);
+            wall_rect = new Rectangle(0, 0, width, height);
+
             Paint += GamePaint;
             KeyDown += GameKeyPress; //kod pritiska tipke
             KeyUp += GameKeyUp;
@@ -87,6 +96,7 @@ namespace CurveFever
             Graphics novi = Graphics.FromImage(newState);
             novi.DrawImage(currentState, new Point(0, 0));
             currentState = newState;
+            wall_rect = new Rectangle(2, 2, width - 5, height - 5);
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -194,6 +204,12 @@ namespace CurveFever
                         currentState = new Bitmap(width, height);
                     }
 
+                    if (foods[j].type == Food.Effects.RemoveWall)
+                    {
+                        ticks_until_wall = 300;
+                        novi.DrawRectangle(new Pen(Color.Black, 8), wall_rect);
+                    }
+
                     //micanje hrane
                     novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(foods[j].Point, foods[j].Size));
                     foods.RemoveAt(j);
@@ -209,6 +225,13 @@ namespace CurveFever
         }
         private void ActivePaint(Graphics novi)
         {
+            if (ticks_until_wall == 0) // crtaj zid
+            {
+                novi.DrawRectangle(wall_pen, wall_rect);
+            } else
+            {
+                ticks_until_wall--;
+            }
             foreach (Food food in foods)
             {
                 //crtanje hrane
@@ -220,12 +243,6 @@ namespace CurveFever
                 if (player.alive)
                 {
                     player.Move();
-                    if (player.CollidedWithWall())
-                    {
-                        collide(player);
-                        continue;
-                        //kad se zabije u zid umire, njegov trag ostaje na ekranu
-                    }
                     Color pixColor = currentState.GetPixel(player.CurrentPoint.X,
                         player.CurrentPoint.Y);
                     // Ako boja nije skroz crna to znaci da se u nesto zabio!

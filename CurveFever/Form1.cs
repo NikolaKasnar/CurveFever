@@ -20,7 +20,6 @@ namespace CurveFever
         {
             left = false;
             right = false;
-            heading = 0.0f;
             alive = true;
             effects = new List<PlayerEffect> { };
         }
@@ -65,13 +64,16 @@ namespace CurveFever
             this.game_height = game_height;
 
             Random rnd = new Random();
-            cur_x = Convert.ToDouble(rnd.Next(20, game_width - 200));
-            cur_y = Convert.ToDouble(rnd.Next(20, game_height - 20));
+
+            heading = rnd.NextDouble() * Math.PI * 2;
+
+            cur_x = Convert.ToDouble(rnd.Next(200, game_width - 200));
+            cur_y = Convert.ToDouble(rnd.Next(200, game_height - 200));
             //da nije bas na preblizu (desnom) rubu na startu
-            prelast_x = cur_x - 10;
-            prelast_y = cur_y;
-            last_x = cur_x - 5;
-            last_y = cur_y;
+            last_x = cur_x - speed * Math.Cos(heading);
+            last_y = cur_y - speed * Math.Sin(heading);
+            prelast_x = last_x - speed * Math.Cos(heading);
+            prelast_y = last_y - speed * Math.Sin(heading);
             last_points = new Point[2];
             last_points[0] = new Point();
             last_points[1] = new Point();
@@ -97,8 +99,45 @@ namespace CurveFever
                 return new Point(Convert.ToInt32(cur_x), Convert.ToInt32(cur_y));
             }
         }
-        private double heading;
-        //smjer u kojem se zmija krece
+        private double heading; //smjer u kojem se zmija krece
+        private void LoopAroundScreen()
+        {
+            bool changed = false;
+            while (true) // da osiguramo da su trenutne pozicije unutar ekrana!
+            {
+                changed = false;
+                if (cur_x < 0)
+                {
+                    cur_x += game_width;
+                    changed = true;
+                }
+                if (cur_y < 0)
+                {
+                    cur_y += game_height;
+                    changed = true;
+                }
+                if (cur_x >= game_width)
+                {
+                    cur_x -= game_width;
+                    changed = true;
+                }
+                if (cur_y >= game_height)
+                {
+                    cur_y -= game_height;
+                    changed = true;
+                }
+                if (changed)
+                {
+                    last_x = cur_x;
+                    last_y = cur_y;
+                    prelast_x = cur_x;
+                    prelast_y = cur_y;
+                } else
+                {
+                    break;
+                }
+            }
+        }
         public void Move()
         {
             counter++;
@@ -110,6 +149,7 @@ namespace CurveFever
             last_y = cur_y;
             cur_x = last_x + speed * Math.Cos(heading);
             cur_y = last_y + speed * Math.Sin(heading);
+            LoopAroundScreen();
             foreach (PlayerEffect effect in effects)
             {
                 effect.countdown--;
@@ -215,13 +255,14 @@ namespace CurveFever
         private void InitializeComponents()
         {
             //za testiranje same igrice
+            /*
             Player p = new Player();
             p.LeftKey = Keys.A; p.RightKey = Keys.D;
             Player p2 = new Player();
             p2.LeftKey = Keys.J; p2.RightKey = Keys.L;
             List<Player> list = new List<Player>() { p, p2 };
             StartGame(list);
-            /*
+            */
             // Crtanje pocetne forme i naslova
             this.Text = "CurveFever";
             this.Size = new System.Drawing.Size(800, 600);
@@ -256,7 +297,7 @@ namespace CurveFever
                 Location = new System.Drawing.Point(360, 180)
             };
             btnExit.Click += BtnExit_Click;
-            this.Controls.Add(btnExit);*/
+            this.Controls.Add(btnExit);
         }
 
         // Klikom na gumb Start Game otvara se forma za odabir broja igraca

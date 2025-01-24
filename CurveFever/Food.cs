@@ -22,6 +22,7 @@ namespace CurveFever
             Slower, // zmija ide sporije
             OtherFaster, // sve ostale zmije idu brze
             Thicker, // podebljanje traga zmije
+            RemoveWall, // zidovi privremeno nestanu
             AfterLast,
             First = Erase,
         }
@@ -40,7 +41,6 @@ namespace CurveFever
         }
         public int width { get; set; }
         public int height { get; set; }
-        public Color color { get; set; }
         public Bitmap Picture { get; set; }
 
         public Food(int width, int height)
@@ -55,23 +55,21 @@ namespace CurveFever
             {
                 case Effects.Erase:
                     ImageData = new MemoryStream(Properties.Resources.izbrisi);
-                    color = Color.SeaGreen;
                     break;
                 case Effects.Faster:
                     ImageData = new MemoryStream(Properties.Resources.ubrzanje);
-                    color = Color.HotPink;
                     break;
                 case Effects.Slower:
                     ImageData = new MemoryStream(Properties.Resources.usporavanje);
-                    color = Color.SaddleBrown;
                     break;
                 case Effects.OtherFaster:
                     ImageData = new MemoryStream(Properties.Resources.ubrzanje_drugih);
-                    color = Color.Silver;
                     break;
                 case Effects.Thicker:
                     ImageData = new MemoryStream(Properties.Resources.udebljavanje);
-                    color = Color.White;
+                    break;
+                case Effects.RemoveWall:
+                    ImageData = new MemoryStream(Properties.Resources.zidovi);
                     break;
                 default:
                     ImageData = new MemoryStream(Properties.Resources.izbrisi);
