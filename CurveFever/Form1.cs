@@ -13,8 +13,8 @@ namespace CurveFever
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
-        public double curve = 0.06f; //kut za koji skrece, treba neka slozenija trig kod MoveLeft i Right
-        public double speed = 5.0; //radijus kruznice po kojoj skrece
+        public double curve = 0.06f; //kut za koji skrece
+        public double speed = 4.0; //radijus kruznice po kojoj skrece
 
         public Player()
         {
@@ -40,6 +40,7 @@ namespace CurveFever
         public int score { get; set; }
 
         private double last_x, last_y;
+        private double prelast_x, prelast_y;
         private double cur_x, cur_y;
         private int counter;
 
@@ -67,7 +68,9 @@ namespace CurveFever
             cur_x = Convert.ToDouble(rnd.Next(20, game_width - 200));
             cur_y = Convert.ToDouble(rnd.Next(20, game_height - 20));
             //da nije bas na preblizu (desnom) rubu na startu
-            last_x = cur_x + 5;
+            prelast_x = cur_x - 10;
+            prelast_y = cur_y;
+            last_x = cur_x - 5;
             last_y = cur_y;
             last_points = new Point[2];
             last_points[0] = new Point();
@@ -76,22 +79,33 @@ namespace CurveFever
             GetDot();
         }
         private Point[] last_points;
-        public Point[] LastPoints {
+        public Point[] LastPoints
+        { //zadnje dvije tocke u kojima se zmija nalazila
             get {
-                last_points[0].X = Convert.ToInt32(last_x);
-                last_points[0].Y = Convert.ToInt32(last_y);
-                last_points[1].X = Convert.ToInt32(cur_x);
-                last_points[1].Y = Convert.ToInt32(cur_y);
+                last_points[0].X = Convert.ToInt32(prelast_x);
+                last_points[0].Y = Convert.ToInt32(prelast_y);
+                last_points[1].X = Convert.ToInt32(last_x);
+                last_points[1].Y = Convert.ToInt32(last_y);
                 return last_points;
             }
         }
-        //zadnje dvije tocke u kojima se zmija nalazila
+        
+        public Point CurrentPoint
+        { // Trenutna tocka na kojoj se zmija nalazi
+            get
+            {
+                return new Point(Convert.ToInt32(cur_x), Convert.ToInt32(cur_y));
+            }
+        }
         private double heading;
         //smjer u kojem se zmija krece
         public void Move()
         {
+            counter++;
             if (right) MoveRight();
             if (left) MoveLeft();
+            prelast_x = last_x;
+            prelast_y = last_y;
             last_x = cur_x;
             last_y = cur_y;
             cur_x = last_x + speed * Math.Cos(heading);
@@ -109,20 +123,18 @@ namespace CurveFever
         private Rectangle GetDot()
         {
             dot = new Rectangle();
-            dot.X = Convert.ToInt32(cur_x - Pen.Width / 2);
-            dot.Y = Convert.ToInt32(cur_y - Pen.Width / 2);
-            dot.Width = Convert.ToInt32(Pen.Width);
-            dot.Height = Convert.ToInt32(Pen.Width);
+            dot.X = Convert.ToInt32(cur_x - Pen.Width * 0.7);
+            dot.Y = Convert.ToInt32(cur_y - Pen.Width * 0.7);
+            dot.Width = Convert.ToInt32(Pen.Width * 1.4);
+            dot.Height = Convert.ToInt32(Pen.Width * 1.4);
             return dot;
         }
         public void DrawDot(Graphics g)
         {
-            g.FillEllipse(Pen.Brush, GetDot());
+            g.FillEllipse(new SolidBrush(Color.Green), GetDot());
         }
         public void Draw(Graphics novi)
         {
-            // novi.FillEllipse(new SolidBrush(Color.Black), dot);
-            counter++;
             if (counter % 100 < 95)
             {
                 novi.DrawLine(Pen, LastPoints[0], LastPoints[1]);
@@ -146,10 +158,10 @@ namespace CurveFever
             switch (effect)
             {
                 case Food.Effects.Faster:
-                    speed += 2.5;
+                    speed += 2;
                     break;
                 case Food.Effects.Slower:
-                    speed -= 1.5;
+                    speed -= 1;
                     break;
                 case Food.Effects.Thicker:
                     Pen = new Pen(Pen.Color, Pen.Width + 3);
@@ -164,10 +176,10 @@ namespace CurveFever
             switch (effect)
             {
                 case Food.Effects.Faster:
-                    speed -= 2.5;
+                    speed -= 2;
                     break;
                 case Food.Effects.Slower:
-                    speed += 1.5;
+                    speed += 1;
                     break;
                 case Food.Effects.Thicker:
                     Pen = new Pen(Pen.Color, Pen.Width - 3);

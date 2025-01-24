@@ -27,7 +27,7 @@ namespace CurveFever
         List<Food> foods; //hrana koja je trenutno na ekranu
         int numberOfPlayers;
         int livingPlayers;
-        static int penSize = 4;
+        const int penSize = 6;
         Pen[] pens = { new Pen(Color.Red, penSize), new Pen(Color.Yellow, penSize), new Pen(Color.Azure, penSize),
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
         bool beginGame; //je li igra zapoceta/pauzirana (pritiskom SPACE)
@@ -166,7 +166,7 @@ namespace CurveFever
 
             for (int i = 0; i < numberOfPlayers; i++)
             {
-                novi.DrawCurve(players[i].Pen, players[i].LastPoints);
+                players[i].Draw(novi);
                 //pojavi se mala linija gdje je pocetak zmije, to se crta na sliku
             }
         }
@@ -212,7 +212,7 @@ namespace CurveFever
             foreach (Food food in foods)
             {
                 //crtanje hrane
-                novi.FillRectangle(new SolidBrush(food.color), new Rectangle(food.Point, food.Size));
+                novi.DrawImageUnscaled(food.Picture, food.Point);
             }
 
             foreach (Player player in players)
@@ -226,8 +226,8 @@ namespace CurveFever
                         continue;
                         //kad se zabije u zid umire, njegov trag ostaje na ekranu
                     }
-                    Color pixColor = currentState.GetPixel(player.LastPoints[1].X,
-                        player.LastPoints[1].Y);
+                    Color pixColor = currentState.GetPixel(player.CurrentPoint.X,
+                        player.CurrentPoint.Y);
                     // Ako boja nije skroz crna to znaci da se u nesto zabio!
                     if (pixColor.R != 0 || pixColor.G != 0 || pixColor.B != 0)
                     {
