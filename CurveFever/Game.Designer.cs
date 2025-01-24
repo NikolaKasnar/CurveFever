@@ -48,6 +48,7 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "Game";
             Size = new Size(1275, 1067);
+            Load += Game_Load;
             ResumeLayout(false);
         }
 

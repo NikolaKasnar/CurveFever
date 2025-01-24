@@ -289,7 +289,7 @@ namespace CurveFever
                 foreach (Player player in players)
                 {
                     //igracu koji je ziv povecat ce se score
-                    if (player.alive && player.score != victoryScore)
+                    if (player.alive)
                     {
                         player.score++;
                         updateScores?.Invoke(player); // Azuriraj rezultat u UI
@@ -337,6 +337,5 @@ namespace CurveFever
 
             novi.Dispose();
         }
-
     }
 }
