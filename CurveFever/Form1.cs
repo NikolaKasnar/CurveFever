@@ -302,7 +302,7 @@ namespace CurveFever
             };
             btnExit.Click += BtnExit_Click;
             this.Controls.Add(btnExit);
-
+            
         }
 
         // Klikom na gumb Start Game otvara se forma za odabir broja igraca
@@ -379,16 +379,6 @@ namespace CurveFever
                 AutoSize = true
             };
             scorePanel.Controls.Add(lbl10);
-
-            Label lblPointDifference = new Label
-            {
-                Text = "2 point difference",
-                Font = new System.Drawing.Font("Arial", 14, System.Drawing.FontStyle.Regular),
-                ForeColor = System.Drawing.Color.White,
-                Location = new System.Drawing.Point(40, 170),
-                AutoSize = true
-            };
-            scorePanel.Controls.Add(lblPointDifference);
 
             // Dodajemo dinamicki rezultate igraca
             string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
