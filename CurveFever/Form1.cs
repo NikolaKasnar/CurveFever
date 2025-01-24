@@ -36,7 +36,7 @@ namespace CurveFever
         //je li tipka za desno trenutno pritisnuta
 
         public Pen Pen { get; set; }
-        //olovka kojom se crta zmija, za svaku razlièite boje
+        //olovka kojom se crta zmija, za svaku razliÃ¨ite boje
         public int score { get; set; }
 
         private double last_x, last_y;
@@ -387,19 +387,19 @@ namespace CurveFever
             scorePanel.Controls.Add(lblPointDifference);
 
             // Dodajemo dinamicki rezultate igraca
-             string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
-                for (int i = 0; i < players.Count; i++)
+            string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
+            for (int i = 0; i < players.Count; i++)
+            {
+                Label playerScoreLabel = new Label
                 {
-                    Label playerScoreLabel = new Label
-                    {
-                        Text = $"{players[i].Name} {players[i].score}",
-                        Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
-                        ForeColor = Color.FromName(colors[i % colors.Length]),
-                        Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
-                        AutoSize = true
-                    };
-                    scorePanel.Controls.Add(playerScoreLabel);
-                }
+                    Text = $"{players[i].Name} {players[i].score}",
+                    Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
+                    ForeColor = Color.FromName(colors[i % colors.Length]),
+                    Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
+                    AutoSize = true
+                };
+                scorePanel.Controls.Add(playerScoreLabel);
+            }
 
             Label lblSpaceToPlay = new Label
             {

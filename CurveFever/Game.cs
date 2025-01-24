@@ -52,7 +52,7 @@ namespace CurveFever
             InitPlayers();
             for (int i = 0; i < foods.Capacity; i++)
             {
-                foods.Add(new Food(width, height));
+            foods.Add(new Food(width, height));
             }
 
             currentState = new Bitmap(width, height);
@@ -162,7 +162,7 @@ namespace CurveFever
                 player.alive = false;
                 livingPlayers--;
             }
-                
+
         }
         private void SetupGame(Graphics novi, PaintEventArgs e)
         {
@@ -198,6 +198,7 @@ namespace CurveFever
                         // brisanje cijelog ekrana
                         currentState = new Bitmap(width, height);
                     }
+
 
                     if (foods[j].type == Food.Effects.RemoveWall)
                     {
@@ -307,6 +308,5 @@ namespace CurveFever
 
             novi.Dispose();
         }
-
     }
 }
