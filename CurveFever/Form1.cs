@@ -323,6 +323,9 @@ namespace CurveFever
             this.Close();
         }
 
+        // Dictionary potreban za pamcenje svih rezultata igraca
+        private Dictionary<Player, Label> playerScoreLabels = new Dictionary<Player, Label>();
+
         private void StartGame(List<Player> players)
         {
             // Obrisemo prijasnji ekran
@@ -345,7 +348,8 @@ namespace CurveFever
             //MessageBox.Show(splitContainer.Panel1.Width.ToString());
 
             //lijevi container, s novim Game objektom
-            Game game = new Game(players, splitContainer);
+            // Saljemo i funkciju za azuriranje rezultata u drugom split containeru
+            Game game = new Game(players, UpdateScores);
             splitContainer.Panel1.Controls.Add(game);
 
             // Desni container
@@ -388,6 +392,8 @@ namespace CurveFever
 
             // Dodajemo dinamicki rezultate igraca
             string[] colors = { "Red", "Yellow", "Azure", "Green", "Violet", "Blue" };
+            playerScoreLabels.Clear();// Obrisemo sve prije dodavanja novog rezultata
+
             for (int i = 0; i < players.Count; i++)
             {
                 Label playerScoreLabel = new Label
@@ -395,9 +401,11 @@ namespace CurveFever
                     Text = $"{players[i].Name} {players[i].score}",
                     Font = new System.Drawing.Font("Arial", 16, System.Drawing.FontStyle.Bold),
                     ForeColor = Color.FromName(colors[i % colors.Length]),
-                    Location = new System.Drawing.Point(10, 210 + (30 * i)), // Adjust vertical spacing
+                    Location = new System.Drawing.Point(10, 210 + (30 * i)),
                     AutoSize = true
                 };
+                // Pohranimo reference za azuriranja rezultata
+                playerScoreLabels[players[i]] = playerScoreLabel;
                 scorePanel.Controls.Add(playerScoreLabel);
             }
 
@@ -422,6 +430,15 @@ namespace CurveFever
             scorePanel.Controls.Add(lblEscapeToQuit);
             
             splitContainer.Panel2.Controls.Add(scorePanel);
+        }
+
+        // Metoda za azuriranje rezultata
+        private void UpdateScores(Player player)
+        {
+            if (playerScoreLabels.ContainsKey(player))
+            {
+                playerScoreLabels[player].Text = $"{player.Name} {player.score}";
+            }
         }
     }
 
