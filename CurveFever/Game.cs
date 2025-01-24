@@ -12,6 +12,7 @@ using System.Windows;
 using System.Drawing.Drawing2D;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic.Devices;
+using System.Numerics;
 
 namespace CurveFever
 {
@@ -23,7 +24,7 @@ namespace CurveFever
         List<Food> foods; //hrana koja je trenutno na ekranu
         int numberOfPlayers;
         int livingPlayers;
-        int victoryScore = 5; //broj bodova potreban za pobjedu
+        int victoryScore = 2; //broj bodova potreban za pobjedu
         const int penSize = 6;
         Pen[] pens = { new Pen(Color.Red, penSize), new Pen(Color.Yellow, penSize), new Pen(Color.Azure, penSize),
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
@@ -35,8 +36,10 @@ namespace CurveFever
         private Pen wall_pen;
         private Rectangle wall_rect;
         Bitmap currentState; //slika u koju se sprema trenutni izgled ekrana
+        // Metoda za azuriranje rezultata
+        private Action<Player> updateScores;
 
-        public Game(List<Player> players)
+        public Game(List<Player> players, Action<Player> updateScores)
         {
             InitializeComponent();
             this.DoubleBuffered = true;
@@ -52,7 +55,7 @@ namespace CurveFever
             InitPlayers();
             for (int i = 0; i < foods.Capacity; i++)
             {
-            foods.Add(new Food(width, height));
+                foods.Add(new Food(width, height));
             }
 
             currentState = new Bitmap(width, height);
@@ -66,6 +69,7 @@ namespace CurveFever
             Paint += GamePaint;
             KeyDown += GameKeyPress; //kod pritiska tipke
             KeyUp += GameKeyUp;
+            this.updateScores = updateScores;
         }
 
         private void InitPlayers()
@@ -85,7 +89,8 @@ namespace CurveFever
             this.width = Width;
             this.height = Height;
 
-            foreach (Player player in players) {
+            foreach (Player player in players)
+            {
                 player.game_height = Height;
                 player.game_width = Width;
             }
@@ -107,14 +112,13 @@ namespace CurveFever
 
         private void GameKeyPress(object? sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Space) //igra se pauzira/pokrece
+            if (e.KeyCode == Keys.Space) //igra se pauzira/pokrece
             {
                 beginGame = true;
                 pauseGame = !pauseGame;
                 if (newRound)
                 {
-                    //kod nove runde, crta se prazna slika na ekran
-                    //igra je u pocetku runde pauzirana
+                    //nova runda - crta se prazna slika
                     newRound = false;
                     currentState = new Bitmap(width, height);
                     pauseGame = true;
@@ -224,7 +228,8 @@ namespace CurveFever
             if (ticks_until_wall == 0) // crtaj zid
             {
                 novi.DrawRectangle(wall_pen, wall_rect);
-            } else
+            }
+            else
             {
                 ticks_until_wall--;
             }
@@ -255,10 +260,10 @@ namespace CurveFever
                     player.Draw(novi);
                 }
             }
-    }
+        }
 
 
-    private void GamePaint(object sender, PaintEventArgs e)
+        private void GamePaint(object sender, PaintEventArgs e)
         {
             Graphics novi = Graphics.FromImage(currentState);
             //varijabla novi i bitmap currentState sluze za pamcenje stanja na grafici,
@@ -279,21 +284,45 @@ namespace CurveFever
             if (livingPlayers == 1) //zavrsetak runde
             {
                 pauseGame = true;
-                newRound = true;
+                DialogResult ok = DialogResult.No;
+                Player victor = null;
                 foreach (Player player in players)
                 {
                     //igracu koji je ziv povecat ce se score
-                    if (player.alive) player.score++;
+                    if (player.alive && player.score != victoryScore)
+                    {
+                        player.score++;
+                        updateScores?.Invoke(player); // Azuriraj rezultat u UI
+                    }
                     if (player.score == victoryScore)
                     {
-                       MessageBox.Show("Pobjednik je " + player.Name + "!");
+                        updateScores?.Invoke(player); // Azuriraj rezultat u UI
+                        victor = player;
+                        break;
                     }
                 }
 
                 //iduca runda: broj zivih igraca se resetira
                 //te se oni inicijaliziraju
+                newRound = true;
                 livingPlayers = numberOfPlayers;
                 InitPlayers();
+
+                if(victor!=null) //poruka o pobjedi
+                    ok = MessageBox.Show("Pobjednik je " + victor.Name + "!");
+
+                if (ok == DialogResult.OK)
+                {
+                    foreach (Player p in players)
+                    {
+                        p.score = 0; //igra pocinje ispocetka, svi imaju 0 bodova
+                        updateScores?.Invoke(p);
+                    }
+                    //odmah se crta prazna slika, da se ne mora dodatno pritisnuti SPACE
+                    newRound = false;
+                    currentState = new Bitmap(width, height);
+                    pauseGame = true;
+                }
             }
 
             g.DrawImage(currentState, new Point(0, 0));
@@ -308,5 +337,6 @@ namespace CurveFever
 
             novi.Dispose();
         }
+
     }
 }
