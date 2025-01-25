@@ -24,7 +24,7 @@ namespace CurveFever
         List<Food> foods; //hrana koja je trenutno na ekranu
         int numberOfPlayers;
         int livingPlayers;
-        int victoryScore = 2; //broj bodova potreban za pobjedu
+        int victoryScore = 10; //broj bodova potreban za pobjedu
         const int penSize = 6;
         Pen[] pens = { new Pen(Color.Red, penSize), new Pen(Color.Yellow, penSize), new Pen(Color.Azure, penSize),
             new Pen(Color.Green, penSize), new Pen(Color.Violet, penSize), new Pen(Color.Blue, penSize)}; //boje igraca
@@ -301,6 +301,8 @@ namespace CurveFever
                         break;
                     }
                 }
+
+                
 
                 //iduca runda: broj zivih igraca se resetira
                 //te se oni inicijaliziraju
