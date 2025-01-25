@@ -302,6 +302,8 @@ namespace CurveFever
                     }
                 }
 
+                
+
                 //iduca runda: broj zivih igraca se resetira
                 //te se oni inicijaliziraju
                 newRound = true;
