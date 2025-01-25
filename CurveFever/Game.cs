@@ -33,8 +33,8 @@ namespace CurveFever
         bool newRound = false; //je li zapoceta nova runda
         private int ticks_until_wall; // koliko jos timer tick-ova dok se zid opet ne pojavi
         // 0 ako se zid treba crtati
-        private Pen wall_pen;
-        private Rectangle wall_rect;
+        private Pen wall_pen; // s njom se crta zid
+        private Rectangle wall_rect; // odgovara polozaju zida u igri
         Bitmap currentState; //slika u koju se sprema trenutni izgled ekrana
         // Metoda za azuriranje rezultata
         private Action<Player> updateScores;
@@ -53,10 +53,6 @@ namespace CurveFever
             livingPlayers = numberOfPlayers;
             foods = new List<Food>(3);
             InitPlayers();
-            for (int i = 0; i < foods.Capacity; i++)
-            {
-                foods.Add(new Food(width, height));
-            }
 
             currentState = new Bitmap(width, height);
             beginGame = false;
@@ -81,6 +77,11 @@ namespace CurveFever
                 players[i].alive = true;
                 players[i].Pen = pens[i];
                 players[i].GeneratePosition(width, height);
+            }
+            foods.Clear();
+            for (int i = 0; i < foods.Capacity; i++)
+            {
+                foods.Add(new Food(width, height));
             }
         }
 
@@ -159,6 +160,7 @@ namespace CurveFever
 
         private void collide(Player player)
         {
+            // poziva se kad se igrac zabio u nesto (sto nije hrana)
             if (player.alive)
             {
                 //zmija umire - vise se ne moze kretati do kraja runde
@@ -170,6 +172,7 @@ namespace CurveFever
         }
         private void SetupGame(Graphics novi, PaintEventArgs e)
         {
+            // crtanje dok igra jos nije pocela
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             novi.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, width, height));
 
@@ -178,9 +181,12 @@ namespace CurveFever
                 players[i].Draw(novi);
                 //pojavi se mala linija gdje je pocetak zmije, to se crta na sliku
             }
+            foreach (Food food in foods)
+                novi.DrawImageUnscaled(food.Picture, food.Point);
         }
         private bool CheckFoodCollision(Graphics novi, Player player)
         {
+            // provjeravanje je li se igrac zabio u hranu
             for (int j = 0; j < foods.Count; j++)
             {
                 if (foods[j].checkHunger(player))
@@ -225,6 +231,7 @@ namespace CurveFever
         }
         private void ActivePaint(Graphics novi)
         {
+            // crtanje dok igra nije pauzirana
             if (ticks_until_wall == 0) // crtaj zid
             {
                 novi.DrawRectangle(wall_pen, wall_rect);
@@ -244,18 +251,21 @@ namespace CurveFever
                 if (player.alive)
                 {
                     player.Move();
-                    Color pixColor = currentState.GetPixel(player.CurrentPoint.X,
-                        player.CurrentPoint.Y);
-                    // Ako boja nije skroz crna to znaci da se u nesto zabio!
-                    if (pixColor.R != 0 || pixColor.G != 0 || pixColor.B != 0)
+                    try
                     {
-                        //prvo provjera je li se zabio u hranu
-                        if (!CheckFoodCollision(novi, player))
+                        Color pixColor = currentState.GetPixel(player.CurrentPoint.X,
+                            player.CurrentPoint.Y);
+                        // Ako boja nije skroz crna to znaci da se u nesto zabio!
+                        if (pixColor.R != 0 || pixColor.G != 0 || pixColor.B != 0)
                         {
-                            //ako se zabio u nesto osim hrane, umire
-                            collide(player);
+                            //prvo provjera je li se zabio u hranu
+                            if (!CheckFoodCollision(novi, player))
+                            {
+                                //ako se zabio u nesto osim hrane, umire
+                                collide(player);
+                            }
                         }
-                    }
+                    } catch { }
 
                     player.Draw(novi);
                 }
@@ -309,6 +319,8 @@ namespace CurveFever
                 newRound = true;
                 livingPlayers = numberOfPlayers;
                 InitPlayers();
+
+                ticks_until_wall = 0; // na pocetku svake runde postoji zid
 
                 if(victor!=null) //poruka o pobjedi
                     ok = MessageBox.Show("Pobjednik je " + victor.Name + "!");

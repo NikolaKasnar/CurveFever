@@ -9,8 +9,8 @@ namespace CurveFever
     // Klasa u koju spremamo informacije igraca
     public class Player
     {
-        public double curve = 0.06f; //kut za koji skrece
-        public double speed = 4.0; //radijus kruznice po kojoj skrece
+        public double curve = 0.06f; // kut za koji skrece
+        public double speed = 4.0; // brzina kojom se krece
 
         public Player()
         {
@@ -35,28 +35,29 @@ namespace CurveFever
         //olovka kojom se crta zmija, za svaku razlièite boje
         public int score { get; set; }
 
-        private double last_x, last_y;
-        private double prelast_x, prelast_y;
-        private double cur_x, cur_y;
-        private int counter;
+        private double last_x, last_y; // zadnje koordinate zmije
+        private double prelast_x, prelast_y; // predzadnje koordinate zmije
+        private double cur_x, cur_y; // trenutne koordinate zmije
+        private int counter; // broj koliko frame-ova zmije postoji
 
         public int game_width { get; set; }
         public int game_height { get; set; }
         public class PlayerEffect
-        {
-            public Food.Effects type;
-            public int countdown;
+        { // Klasa za efekte koje zmija moze pokupiti
+            public Food.Effects type; // tip efekta
+            public int countdown; // koliko jos dugo traje efekt
             public PlayerEffect(Food.Effects type)
             {
                 this.type = type;
                 countdown = 300;
             }
         }
-        public List<PlayerEffect> effects;
-        private Rectangle dot;
+        public List<PlayerEffect> effects; // popis trenutno trajucih efekata
+        private Rectangle dot; // glava od zmije
 
         public void GeneratePosition(int game_width, int game_height)
         {
+            // poziva se na pocetku svake runde
             this.game_width = game_width;
             this.game_height = game_height;
 
@@ -75,7 +76,11 @@ namespace CurveFever
             last_points[0] = new Point();
             last_points[1] = new Point();
             counter = 0;
+            Pen.Width = 6;
+            speed = 4.0;
             GetDot();
+
+            effects.Clear();
         }
         private Point[] last_points;
         public Point[] LastPoints
@@ -126,6 +131,9 @@ namespace CurveFever
                 }
                 if (changed)
                 {
+                    // ako se zmija zavrtila van ekrana
+                    // stavi da su joj zadnje pozicije blizu trenutne pozicije
+                    // (kako bi se izbjeglo crtanje preko pola ekrana
                     last_x = cur_x;
                     last_y = cur_y;
                     prelast_x = cur_x;
@@ -161,6 +169,7 @@ namespace CurveFever
         }
         private Rectangle GetDot()
         {
+            // vraca pravokutnik u kojem se treba nacrtati trenutna tocka zmije
             dot = new Rectangle();
             dot.X = Convert.ToInt32(cur_x - Pen.Width * 0.7);
             dot.Y = Convert.ToInt32(cur_y - Pen.Width * 0.7);
@@ -170,11 +179,14 @@ namespace CurveFever
         }
         public void DrawDot(Graphics g)
         {
+            // crta trenutnu tocku odnosno glavu zmije
             g.FillEllipse(new SolidBrush(Color.Green), GetDot());
         }
         public void Draw(Graphics novi)
         {
-            if (counter % 100 < 95)
+            // docrtava zmiju
+            if (counter % 100 < 95) // od 100 frameova zadnjih 5 se ne crta zmije
+                // time dobivamo rupe
             {
                 novi.DrawLine(Pen, LastPoints[0], LastPoints[1]);
             }
@@ -187,12 +199,9 @@ namespace CurveFever
         {
             heading += curve;
         }
-        public bool CollidedWithWall()
-        {
-            return cur_x > game_width || cur_x < 0 || cur_y > game_height || cur_y < 0;
-        }
         public void Eat(Food.Effects effect)
         {
+            // primjenjuje efekt na sebe
             switch (effect)
             {
                 case Food.Effects.Faster:
@@ -211,6 +220,7 @@ namespace CurveFever
         }
         public void UnEat(Food.Effects effect)
         {
+            // makiva primjenjeni efekt sa sebe
             switch (effect)
             {
                 case Food.Effects.Faster:

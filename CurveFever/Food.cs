@@ -26,10 +26,12 @@ namespace CurveFever
             AfterLast,
             First = Erase,
         }
-        public Point Point { get; set; }
-        public Effects type { get; set; }
+        public Point Point { get; set; } // gdje se hrana nalazi
+        public Effects type { get; set; } // tip efekta koji hrana ima
         public Effects AntiType
-        {
+        { // crvene kuglice oznacavaju da sve druge zmije trebaju dobiti neki efekt
+            // za takve kuglice je AntiType jednak efektu koji ce druge zmije osjetiti
+            // inace je None
             get
             {
                 return type switch
@@ -41,17 +43,16 @@ namespace CurveFever
         }
         public int width { get; set; }
         public int height { get; set; }
-        public Bitmap Picture { get; set; }
+        public Bitmap Picture { get; set; } // slika kuglice
 
         public Food(int width, int height)
         {
             InitializeComponent();
             Random rnd = new Random();
-            Point = new Point(rnd.Next(10, width - 10), rnd.Next(10, height - 10));
             type = (Effects) rnd.Next((int) Effects.First, (int) Effects.AfterLast);
             MemoryStream ImageData;
 
-            switch (type)
+            switch (type) // ovisno o tipu ucitavamo resurs
             {
                 case Effects.Erase:
                     ImageData = new MemoryStream(Properties.Resources.izbrisi);
@@ -76,10 +77,12 @@ namespace CurveFever
                     break;
             }
 
-            Picture = new Bitmap(ImageData);
+            Picture = new Bitmap(ImageData); // i od tog resursa radimo sliku 
             this.width = width;
             this.height = height;
             Size = Picture.Size;
+            Point = new Point(rnd.Next(10, width - 10 - Size.Width),
+                              rnd.Next(10, height - 10 - Size.Height));
         }
 
         public bool checkHunger(Player player)
